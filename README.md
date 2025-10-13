@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Distribuidora
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.1.
@@ -57,3 +58,6 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+=======
+# FRONTEND
+>>>>>>> 45803c4a0286db4ee605a21f78a10430441c1d3a
