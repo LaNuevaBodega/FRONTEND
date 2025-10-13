@@ -1,0 +1,138 @@
+.abm-producto-container {
+    padding: 24px;
+    background-color: #f7f7f7;
+    min-height: calc(100vh - 64px);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    h2 {
+        color: #3f51b5;
+        font-size: 1.8rem;
+    }
+}
+
+.grid-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Lista (2) y Detalle (1) */
+    gap: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Panel de Lista (Izquierda) --- */
+
+.lista-panel {
+    padding: 20px;
+    border-right: 1px solid #eee;
+}
+
+.buscador {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    
+    input {
+        flex-grow: 1;
+        border: none;
+        outline: none;
+        padding: 0;
+        font-size: 1rem;
+    }
+    mat-icon {
+        color: #999;
+        margin-left: 10px;
+    }
+}
+
+.tabla-productos {
+    max-height: 70vh; /* Altura fija para el scroll */
+    overflow-y: auto; /* Habilita el scroll dentro del div */
+    border: 1px solid #eee;
+    border-radius: 4px;
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead th {
+        position: sticky;
+        top: 0;
+        background-color: #f0f0f8;
+        padding: 10px;
+        text-align: left;
+        color: #3f51b5;
+        font-weight: 600;
+        border-bottom: 2px solid #3f51b5;
+        z-index: 10;
+    }
+
+    tbody tr {
+        cursor: pointer;
+        transition: background-color 0.15s;
+        border-bottom: 1px solid #f0f0f0;
+        
+        &.seleccionado {
+            background-color: #e8eaf6; 
+            font-weight: bold;
+        }
+
+        &:hover:not(.seleccionado) {
+            background-color: #f7f7f7;
+        }
+
+        td {
+            padding: 10px;
+            .codigo-item {
+                font-size: 0.85rem;
+                color: #777;
+                margin-left: 8px;
+            }
+        }
+    }
+}
+
+/* --- Panel de Detalle (Derecha) --- */
+.detalle-panel {
+    padding: 20px;
+}
+
+.detalle-producto {
+    h3 {
+        display: flex;
+        align-items: center;
+        color: #3f51b5;
+        margin-top: 0;
+        margin-bottom: 15px;
+        mat-icon { margin-right: 8px; }
+    }
+}
+
+.detalle-info {
+    margin-top: 20px;
+    p {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        border-bottom: 1px dashed #eee;
+        
+        span {
+            font-weight: normal;
+            color: #555;
+        }
+    }
+}
+
+.acciones-abm {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}

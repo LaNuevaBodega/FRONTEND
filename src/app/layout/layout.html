@@ -1,0 +1,72 @@
+<mat-sidenav-container class="app-sidenav-container">
+
+    <mat-sidenav #sidenav class="app-sidenav" mode="side" [opened]="isSidebarOpen()" (mouseenter)="toggleSidebar(true)"
+        (mouseleave)="toggleSidebar(false)">
+
+        <mat-nav-list>
+            <a mat-list-item routerLink="/app/ventas" routerLinkActive="active">
+                <mat-icon>point_of_sale</mat-icon> <!-- Punto de venta / Carrito -->
+                <span>Ventas</span>
+            </a>
+
+            <!-- <a mat-list-item routerLink="/app/dashboard" routerLinkActive="active">
+                <mat-icon>dashboard</mat-icon> 
+                <span>Dashboard</span>
+            </a> -->
+
+            <a mat-list-item routerLink="/app/proveedores" routerLinkActive="active">
+                <mat-icon>local_shipping</mat-icon> <!-- Envío / Proveedores -->
+                <span>Proveedores</span>
+            </a>
+
+            <!-- <a mat-list-item routerLink="/app/facturas" routerLinkActive="active">
+                <mat-icon>receipt_long</mat-icon>
+                <span>Facturas</span>
+            </a> -->
+
+            <a mat-list-item routerLink="/app/productos" routerLinkActive="active">
+                <mat-icon>inventory_2</mat-icon> <!-- Inventario / Productos -->
+                <span>Productos</span>
+            </a>
+
+            <a mat-list-item routerLink="/app/rubros" routerLinkActive="active">
+                <mat-icon>category</mat-icon> <!-- Categoría / Rubros -->
+                <span>Rubros</span>
+            </a>
+
+              <a mat-list-item (click)="onLogout()" class="logout-link">
+                <mat-icon>logout</mat-icon> <span>Cerrar Sesión</span>
+            </a>
+        </mat-nav-list>
+
+    </mat-sidenav>
+
+    <mat-sidenav-content class="main-content-area">
+
+        <mat-toolbar color="primary">
+            <button mat-icon-button (click)="toggleSidebar()">
+                <mat-icon>menu</mat-icon> 
+            </button>
+            <strong>Bienvenido al sistema LNB - Cloud  User : carlos.lategano@aprisait.com </strong>            
+            <span class="spacer"></span>
+            <button mat-button></button>
+        </mat-toolbar>
+
+        <div class="router-content">
+            <router-outlet></router-outlet>
+        </div>
+
+        <div class="header">
+  
+    <button pButton 
+            type="button" 
+            label="Cerrar Sesión" 
+            icon="pi pi-sign-out"
+            (click)="onLogout()" 
+            class="p-button-danger p-button-text">
+    </button>
+</div>
+
+    </mat-sidenav-content>
+
+</mat-sidenav-container>

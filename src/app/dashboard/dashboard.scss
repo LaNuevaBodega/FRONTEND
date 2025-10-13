@@ -1,0 +1,23 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;  // alineado al top
+  gap: 1rem;
+  padding: 1rem;
+
+  .productos-panel {
+    flex: 2;            // ocupa más espacio
+    min-width: 50%;   // ancho mínimo
+    display: flex;
+    flex-direction: column;
+    height: 80vh;       // fuerza altura para que quede al mismo nivel que carrito
+  }
+
+  .carrito-panel {
+    flex: 1;            // ocupa menos espacio
+    min-width: 50%;
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+  }
+}

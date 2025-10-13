@@ -1,0 +1,78 @@
+/**
+ * Estilos para el diálogo de creación/edición de productos.
+ * Incluye el centrado del título y una grilla responsive para el formulario.
+ */
+
+.producto-dialog-container {
+    padding: 16px;
+    min-width: 300px;
+    max-width: 700px; // Aumentamos el ancho máximo para acomodar la grilla de 2 columnas
+
+    // Estilo para el título del diálogo (mat-dialog-title) - Centrado
+    h2[mat-dialog-title] {
+        color: #3f51b5;
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 15px;
+        font-weight: 600;
+        font-size: 1.5rem; 
+        
+        display: block;
+        width: fit-content; 
+        margin: 0 auto 15px auto; // Centrado horizontal
+        text-align: center; 
+    }
+
+    // Estilo para el contenido del diálogo (mat-dialog-content)
+    mat-dialog-content {
+        padding: 0 0 20px 0;
+        overflow: visible;
+    }
+
+    // --- Estilos para la GRIDAD RESPONSIVE (grid-form) ---
+    .grid-form {
+        display: grid;
+        gap: 20px 16px; // Espacio vertical y horizontal entre campos
+        
+        // Configuración por defecto (Mobile/Small Screens): 1 columna
+        grid-template-columns: 1fr; 
+
+        // Media Query para Tablets y Desktop: 2 columnas
+        @media (min-width: 500px) { 
+            grid-template-columns: 1fr 1fr;
+        }
+
+        // Aseguramos que los campos ocupen el ancho completo dentro de su celda
+        mat-form-field.full-width {
+            width: 100%;
+            margin-top: 0; // Eliminamos el margen superior ya que el 'gap' lo reemplaza
+        }
+    }
+
+    // Estilos para las acciones (botones) - Alineados a la Derecha
+    mat-dialog-actions {
+        padding-top: 20px;
+        border-top: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: flex-end; 
+        
+        button {
+            margin-left: 8px;
+            min-width: 100px;
+        }
+
+        // Estilo del botón principal
+        button[color="primary"] {
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+            
+            &:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 5px 8px -1px rgba(0,0,0,.2), 0 8px 12px 0 rgba(0,0,0,.14), 0 3px 20px 0 rgba(0,0,0,.12);
+            }
+        }
+
+        button[mat-dialog-close="false"] {
+            color: #757575;
+        }
+    }
+}

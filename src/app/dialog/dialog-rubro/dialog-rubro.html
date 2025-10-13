@@ -1,0 +1,30 @@
+<div class="tittle">
+<h2 mat-dialog-title>
+    {{ data ? 'Editar rubro: ' + data.nombre : 'Crear nuevo rubro' }}
+</h2>
+</div>
+
+<div mat-dialog-content>
+    <form [formGroup]="rubroForm">
+        
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nombre del Rubro</mat-label>
+            <input matInput formControlName="nombre" placeholder="Ej: Bebidas, Lácteos...">
+            
+            <mat-error *ngIf="rubroForm.get('nombre')?.invalid && rubroForm.get('nombre')?.touched">
+                El nombre es obligatorio.
+            </mat-error>
+        </mat-form-field>
+
+    </form>
+</div>
+
+<div mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="false">
+        Cancelar
+    </button>
+    
+    <button mat-raised-button color="primary" [disabled]="rubroForm.invalid" (click)="guardar()">
+        Guardar
+    </button>
+</div>

@@ -1,0 +1,52 @@
+<div class="rubros-container">
+  
+  <header>
+    <h2>Rubros</h2>
+    <button mat-flat-button color="primary" (click)="abrirDialogo()">
+      <mat-icon>add</mat-icon> Nuevo Rubro
+    </button>
+  </header>
+  
+  <mat-card class="rubros-card">
+    
+    <table mat-table [dataSource]="rubros" class="full-width-table">
+      
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let rubro"> {{rubro.id}} </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+        <td mat-cell *matCellDef="let rubro"> {{rubro.nombre}} </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let rubro">
+          
+          <button mat-icon-button color="accent" (click)="abrirDialogo(rubro)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          
+          <button mat-icon-button color="warn" (click)="eliminarRubro(rubro.id, rubro.nombre)">
+            <mat-icon>delete</mat-icon>
+          </button>
+          
+        </td>
+      </ng-container>
+      
+      <tr mat-header-row *matHeaderRowDef="columnasMostradas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnasMostradas;"></tr>
+      
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="columnasMostradas.length">
+          No hay rubros cargados.
+        </td>
+      </tr>
+      
+    </table>
+    
+  </mat-card>
+
+</div>

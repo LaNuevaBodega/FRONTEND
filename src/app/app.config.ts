@@ -2,11 +2,15 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChang
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { JwtInterceptor } from '../Service/jwt.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideHttpClient() ,
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes)
+    provideRouter(routes),
+    provideHttpClient(withInterceptors([JwtInterceptor]))
   ]
 };

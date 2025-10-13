@@ -1,0 +1,39 @@
+<mat-dialog-content class="dialog-content-container">
+  <h2 class="dialog-title">Selecciona un Método de Pago</h2>
+  <p class="dialog-subtitle">Elige cómo deseas completar el pago.</p>
+
+  <div class="payment-options-grid">
+    @for (option of paymentOptions; track option.name) {
+      <div
+        (click)="seleccionarPago(option.name)"
+        [class.selected]="selectedMethod === option.name"
+        [class.payment-option]="true"
+        [ngClass]="option.colorClass" 
+        [attr.aria-label]="'Seleccionar ' + option.label"
+      >
+        <div class="payment-icon">
+          <span class="emoji-icon">{{ option.icon }}</span>
+        </div>
+        <span class="payment-label">{{ option.label }}</span>
+      </div>
+    }
+  </div>
+  
+  <div *ngIf="selectedMethod === 'QR'" class="qr-display-container">
+    <img [src]="qrImageUrl" alt="Código QR de pago" class="qr-image" />
+    <p class="qr-text">Escaneá este código para completar el pago</p>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button (click)="onCancel()" color="warn" class="btn-cancel">Cancelar</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onConfirm()"
+    [disabled]="!selectedMethod"
+    class="btn-confirm"
+  >
+    Confirmar Pago
+  </button>
+</mat-dialog-actions>

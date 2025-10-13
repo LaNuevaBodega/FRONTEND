@@ -1,0 +1,161 @@
+/* Colores base para mejor personalización */
+$color-primary: #3f51b5; // Indigo de Angular Material
+$color-text-dark: #333;
+$color-border: #ccc;
+
+/* Colores específicos de las opciones */
+$color-green: #4caf50;
+$color-blue: #2196f3;
+$color-red: #f44336;
+
+.dialog-content-container {
+    padding: 24px;
+    width: 100%; 
+}
+
+.dialog-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: $color-text-dark;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.dialog-subtitle {
+    color: #666;
+    margin-bottom: 24px;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* Grid de Opciones de Pago */
+.payment-options-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px; 
+
+    @media (min-width: 600px) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Estilos de los "cuadrados" de pago */
+.payment-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 8px;
+    border: 2px solid $color-border;
+    cursor: pointer;
+    background-color: white;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    /* Estado seleccionado */
+    &.selected {
+        border-color: $color-primary; 
+        transform: scale(1.05);
+        background-color: #e8eaf6; 
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+}
+
+/* Colores de los iconos (depende de la clase asignada en el TS) */
+.color-green {
+    .payment-icon { color: $color-green; }
+    &.selected { color: $color-green; }
+}
+.color-blue {
+    .payment-icon { color: $color-blue; }
+    &.selected { color: $color-blue; }
+}
+.color-red {
+    .payment-icon { color: $color-red; }
+    &.selected { color: $color-red; }
+}
+
+// .payment-icon {
+//     font-size: 40px; 
+//     width: 40px;
+//     height: 40px;
+//     margin-bottom: 8px;
+// }
+
+.payment-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: $color-text-dark;
+    text-transform: uppercase;
+}
+
+/* Estilos para los botones de acción del MatDialog */
+.dialog-actions {
+    padding: 8px 24px 24px 24px;
+}
+
+.btn-confirm {
+    transition: opacity 0.2s;
+    &[disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.payment-icon {
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.emoji-icon {
+  display: inline-block;
+  font-size: 48px;
+  text-align: center;
+}
+
+
+.payment-icon {
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.emoji-icon {
+  display: inline-block;
+  font-size: 48px;
+  text-align: center;
+}
+
+.qr-display-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 24px;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.qr-image {
+  width: 250px;
+  height: 250px;
+  border: 4px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 8px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.qr-text {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #555;
+  text-align: center;
+}
+
+

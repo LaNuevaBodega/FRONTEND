@@ -1,0 +1,76 @@
+.rubro-dialog-container {
+    padding: 16px;
+    min-width: 300px;
+    max-width: 450px; // Establecemos un ancho máximo para que se vea bien centrado
+
+    // Estilo para el contenedor del título (clase "tittle" nueva)
+    .tittle {
+        // Usamos Flexbox para centrar horizontalmente el título.
+        display: flex;
+        justify-content: center; 
+        align-items: center;
+        width: 100%;
+    }
+
+    // Estilo para el título del diálogo (mat-dialog-title)
+    h2[mat-dialog-title] {
+        color: #3f51b5; // Color primario
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+        font-weight: 600;
+        font-size: 1.5rem; // Tamaño de fuente ligeramente más grande
+        text-align: center; // Centramos el texto dentro del H2
+        width: auto; // Permite que el contenido se centre mejor
+    }
+
+    // Estilo para el contenido del diálogo (mat-dialog-content)
+    mat-dialog-content {
+        padding: 0 0 20px 0; // Ajuste de padding
+        overflow: visible; // Importante para que las outlines se vean bien
+        // Aquí no necesitamos centrar explícitamente porque el mat-form-field
+        // ya tiene width: 100% y se alinea con el ancho del diálogo.
+    }
+
+    // Estilo para el campo de formulario
+    mat-form-field.full-width {
+        width: 100%;
+        margin-top: 10px;
+
+        // Mejora el foco y el color del texto de entrada
+        .mat-form-field-wrapper {
+            padding-bottom: 0; // Elimina el padding extra que a veces deja espacio
+        }
+    }
+
+    // Estilos para las acciones (botones)
+    mat-dialog-actions {
+        padding-top: 20px;
+        border-top: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: flex-end; // Mantiene los botones alineados a la derecha
+        
+        // Espaciado entre botones
+        button {
+            margin-left: 8px;
+            min-width: 100px;
+        }
+
+        // Botón principal "Guardar"
+        button[color="primary"] {
+            // Un pequeño efecto hover/active para que se sienta interactivo
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+            
+            &:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 5px 8px -1px rgba(0,0,0,.2), 0 8px 12px 0 rgba(0,0,0,.14), 0 3px 20px 0 rgba(0,0,0,.12);
+            }
+        }
+
+        // Botón "Cancelar"
+        button[mat-dialog-close="false"] {
+            color: #757575;
+        }
+    }
+}

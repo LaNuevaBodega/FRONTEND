@@ -1,0 +1,13 @@
+<div class="ventas-workspace">
+
+  <div class="productos-panel">
+    <h2></h2>
+    <app-stock (productoSeleccionadoParaCarrito)="carrito.agregarProducto($event)"></app-stock>
+  </div>
+
+  <div class="carrito-panel">
+    <h2></h2>
+    <app-carrito #carrito></app-carrito>
+  </div>
+
+</div>

@@ -1,0 +1,44 @@
+<div class="carrito-container">
+  <h3>Carrito</h3>
+
+  <div class="tabla-carrito-wrapper">
+    <table *ngIf="carrito.length > 0">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Código</th>
+          <th>Precio</th>
+          <th>Cantidad</th>
+          <th>Subtotal</th>
+          <th>Accion</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of carrito">
+          <td>{{item.producto.nombre}}</td>
+          <td>{{item.producto.codigo}}</td>
+          <td>${{item.producto.precioVenta}}</td>
+          <td>
+            <button (click)="disminuirCantidad(item)">-</button>
+            {{item.cantidad}}
+            <button (click)="aumentarCantidad(item)">+</button>
+          </td>
+          <td>${{item.producto.precioVenta * item.cantidad}}</td>
+          <td>
+            <button (click)="eliminarProducto(item)">X</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="carrito.length === 0" class="vacio">
+      <em>El carrito está vacío</em>
+    </div>
+  </div>
+
+  <div class="total-pagar">
+    <strong>Total: ${{total}}</strong>
+    <button  class="btn-pagar" (click)="abrirDialogoPago()">Pagar</button>
+  </div>
+</div>

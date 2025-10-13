@@ -1,0 +1,57 @@
+<div class="proveedores-container">
+  
+  <header>
+    <h2>Administración de Proveedores</h2>
+    <button mat-flat-button color="primary" (click)="abrirDialogo()">
+      <mat-icon>add</mat-icon> Nuevo Proveedor
+    </button>
+  </header>
+  
+  <mat-card class="proveedores-card">
+    
+    <table mat-table [dataSource]="proveedores" class="full-width-table">
+      
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let proveedor"> {{proveedor.id}} </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+        <td mat-cell *matCellDef="let proveedor"> {{proveedor.nombre}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="cuit">
+        <th mat-header-cell *matHeaderCellDef> CUIT </th>
+        <td mat-cell *matCellDef="let proveedor"> {{proveedor.cuit}} </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let proveedor">
+          
+          <button mat-icon-button color="accent" (click)="abrirDialogo(proveedor)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          
+          <button mat-icon-button color="warn" (click)="eliminarProveedor(proveedor.id, proveedor.nombre)">
+            <mat-icon>delete</mat-icon>
+          </button>
+          
+        </td>
+      </ng-container>
+      
+      <tr mat-header-row *matHeaderRowDef="columnasMostradas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnasMostradas;"></tr>
+      
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="columnasMostradas.length">
+          No hay proveedores cargados.
+        </td>
+      </tr>
+      
+    </table>
+    
+  </mat-card>
+
+</div>

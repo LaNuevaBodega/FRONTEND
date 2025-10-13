@@ -1,0 +1,71 @@
+/**
+ * Estilos para el diálogo de creación/edición de proveedores o rubros.
+ * Este archivo SCSS debe ser referenciado por el componente de diálogo.
+ */
+
+// Usamos el contenedor principal del diálogo.
+.rubro-dialog-container {
+    padding: 16px;
+    min-width: 300px;
+    max-width: 450px; // Límite de ancho para centrar mejor el contenido en pantallas grandes
+
+    // Estilo para el título del diálogo (mat-dialog-title)
+    h2[mat-dialog-title] {
+        color: #3f51b5; // Color primario de Angular Material
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 15px;
+        font-weight: 600;
+        font-size: 1.5rem; 
+        
+        // CÓDIGO PARA CENTRAR EL TÍTULO
+        display: block;
+        width: fit-content; // El ancho es solo el del texto
+        margin: 0 auto 15px auto; // Centrado horizontal y margen inferior
+        text-align: center; 
+    }
+
+    // Estilo para el contenido del diálogo (mat-dialog-content)
+    mat-dialog-content {
+        padding: 0 0 20px 0;
+        overflow: visible;
+    }
+
+    // Estilo para los campos de formulario
+    mat-form-field.full-width {
+        width: 100%;
+        margin-top: 10px; // Espacio entre campos si hay varios
+
+        .mat-form-field-wrapper {
+            padding-bottom: 0;
+        }
+    }
+
+    // Estilos para las acciones (botones)
+    mat-dialog-actions {
+        padding-top: 20px;
+        border-top: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: flex-end; // Mantiene los botones alineados a la derecha
+        
+        button {
+            margin-left: 8px;
+            min-width: 100px;
+        }
+
+        // Botón principal "Guardar" con efecto visual
+        button[color="primary"] {
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+            
+            &:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 5px 8px -1px rgba(0,0,0,.2), 0 8px 12px 0 rgba(0,0,0,.14), 0 3px 20px 0 rgba(0,0,0,.12);
+            }
+        }
+
+        // Botón "Cancelar"
+        button[mat-dialog-close="false"] {
+            color: #757575;
+        }
+    }
+}

@@ -1,0 +1,84 @@
+<div class="abm-producto-container">
+  
+  <header>
+    <h2>Administración de Productos ({{ productos.length }} en total)</h2>
+    <button mat-flat-button color="primary" (click)="abrirDialogo()">
+      <mat-icon>add</mat-icon> Nuevo Producto
+    </button>
+  </header>
+
+  <div class="grid-layout">
+    
+    <div class="lista-panel">
+      
+      <div class="buscador">
+        <input type="text" [formControl]="searchControl" placeholder="Buscar por nombre o código">
+        <mat-icon>search</mat-icon>
+      </div>
+
+      <div class="tabla-productos">
+        <table>
+          <thead>
+            <tr>
+              <th class="nombre-columna">Nombre / Código</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of productosMostrados" 
+                (click)="seleccionarProducto(p)" 
+                [class.seleccionado]="productoSeleccionado?.id === p.id">
+              <td>
+                <span class="font-bold">{{p.nombre}}</span>
+                <span class="codigo-item">({{p.codigo}})</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div *ngIf="terminoBusquedaActual === '' && indice < productos.length" class="text-center p-2 text-sm text-gray-500">
+          Cargando más productos...
+        </div>
+        <div *ngIf="productosMostrados.length === 0" class="text-center p-4 text-gray-500">
+          No se encontraron productos.
+        </div>
+      </div>
+    </div>
+    
+    <div class="detalle-panel">
+      
+      <div class="detalle-producto" *ngIf="productoSeleccionado; else noSeleccionado">
+        
+        <h3>
+          <mat-icon>info</mat-icon> Detalles
+        </h3>
+        
+        <strong class="text-xl block mb-4">{{productoSeleccionado?.nombre}}</strong>
+
+        <div class="detalle-info">
+          <p><span>ID:</span> <strong>{{productoSeleccionado?.id}}</strong></p>
+          <p><span>Código:</span> <strong>{{productoSeleccionado?.codigo}}</strong></p>
+          <p><span>Precio Venta:</span> <strong>${{productoSeleccionado?.precioVenta}}</strong></p>
+          <p><span>Proveedor:</span> <strong>{{productoSeleccionado?.proveedorNombre || 'N/A'}}</strong></p>
+          <p><span>Rubro:</span> <strong>{{productoSeleccionado?.rubroNombre || 'N/A'}}</strong></p>
+        </div>
+        
+        <div class="acciones-abm">
+          <button mat-raised-button color="accent" (click)="abrirDialogo(productoSeleccionado)">
+            <mat-icon>edit</mat-icon> Editar
+          </button>
+          <button mat-raised-button color="warn" (click)="eliminarProducto(productoSeleccionado)" class="ml-2">
+            <mat-icon>delete</mat-icon> Eliminar
+          </button>
+        </div>
+
+      </div>
+      
+      <ng-template #noSeleccionado>
+        <div class="h-full flex items-center justify-center text-gray-500 p-8 text-center">
+          Seleccione un producto de la lista para ver sus detalles y gestionar el ABM.
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+</div>
