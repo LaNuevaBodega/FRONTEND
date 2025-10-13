@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://tuservidor.com/api' 
+  apiUrl: 'https://lanuevabodegaapi-eaexfudzerhwgpg5.brazilsouth-01.azurewebsites.net' 
 };
