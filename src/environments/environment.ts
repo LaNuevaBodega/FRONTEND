@@ -1,4 +1,4 @@
 export const environment = {
-  production: false,
-  apiUrl: 'https://localhost:7268/api'
+  production: true,
+  apiUrl: 'https://lanuevabodegaapi-eaexfudzerhwgpg5.brazilsouth-01.azurewebsites.net/index.html'
 };
