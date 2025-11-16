@@ -5,35 +5,30 @@
 <div mat-dialog-content class="producto-dialog-container">
     <form [formGroup]="productoForm" class="grid-form">
         
-        <!-- Campo Código -->
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>Código</mat-label>
             <input matInput formControlName="codigo" placeholder="C001">
             <mat-error *ngIf="productoForm.get('codigo')?.invalid">Código es obligatorio.</mat-error>
         </mat-form-field>
-
-        <!-- Campo Nombre -->
+    
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>Nombre</mat-label>
             <input matInput formControlName="nombre" placeholder="Leche Entera">
             <mat-error *ngIf="productoForm.get('nombre')?.invalid">Nombre es obligatorio.</mat-error>
         </mat-form-field>
-        
-        <!-- Campo Precio Costo -->
+                
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>Precio Costo</mat-label>
             <input matInput type="number" formControlName="precioCosto" placeholder="0.00">
             <mat-error *ngIf="productoForm.get('precioCosto')?.invalid">Costo debe ser positivo.</mat-error>
         </mat-form-field>
         
-        <!-- Campo Precio Venta -->
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>Precio Venta</mat-label>
             <input matInput type="number" formControlName="precioVenta" placeholder="0.00">
             <mat-error *ngIf="productoForm.get('precioVenta')?.invalid">Venta debe ser positivo.</mat-error>
         </mat-form-field>
 
-        <!-- Campo Proveedor -->
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>Proveedor</mat-label>
             <mat-select formControlName="idProveedor">
@@ -45,7 +40,6 @@
             <mat-error *ngIf="productoForm.get('idProveedor')?.invalid">Seleccione un proveedor.</mat-error>
         </mat-form-field>
 
-        <!-- Campo Rubro -->
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>Rubro</mat-label>
             <mat-select formControlName="idRubro">

@@ -2,6 +2,14 @@
   <input type="text" [formControl]="searchControl" placeholder="Buscar por nombre o código">
 </div>
 
+<!-- 🔹 Input oculto para el lector de código de barras -->
+<input
+  #barcodeInput
+  type="text"
+  (keydown.enter)="onBarcodeScanned(barcodeInput.value)"
+  style="position: absolute; opacity: 0; height: 0; width: 0"
+/>
+
 <div class="tabla-productos">
   <table>
     <thead>
@@ -10,25 +18,26 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let p of productosMostrados" (click)="seleccionarProducto(p)" [class.seleccionado]="productoSeleccionado?.id === p.id">
-        <td>{{p.nombre}}</td>
+      <tr *ngFor="let p of productosMostrados"
+          (click)="seleccionarProducto(p)"
+          [class.seleccionado]="productoSeleccionado?.id === p.id">
+        <td>{{ p.nombre }}</td>
       </tr>
     </tbody>
   </table>
 </div>
 
 <div class="detalle-producto" *ngIf="productoSeleccionado">
-  <strong>{{productoSeleccionado?.nombre}}</strong>
+  <strong>{{ productoSeleccionado?.nombre }}</strong>
 
   <div class="detalle-codigo-precio">
     <div class="detalle-codigo">
       <span>Código</span>
-      <strong>{{productoSeleccionado?.codigo}}</strong>
+      <strong>{{ productoSeleccionado?.codigo }}</strong>
     </div>
     <div class="detalle-precio">
       <span>Precio</span>
-      <strong>${{productoSeleccionado?.precioVenta}}</strong>
+      <strong>${{ productoSeleccionado?.precioVenta }}</strong>
     </div>
   </div>
 </div>
-

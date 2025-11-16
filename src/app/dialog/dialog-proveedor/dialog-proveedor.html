@@ -5,7 +5,6 @@
 <div mat-dialog-content class="rubro-dialog-container">
     <form [formGroup]="proveedorForm">
         
-        <!-- Campo Nombre -->
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>Nombre del Proveedor</mat-label>
             <input matInput formControlName="nombre" placeholder="Ej: Distribuidora XYZ">
@@ -14,8 +13,7 @@
                 El nombre es obligatorio.
             </mat-error>
         </mat-form-field>
-
-        <!-- Campo CUIT -->
+        
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>CUIT (Opcional)</mat-label> 
             <input matInput formControlName="cuit" placeholder="Ej: 30-12345678-9">

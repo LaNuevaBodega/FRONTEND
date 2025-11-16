@@ -1,24 +1,20 @@
-import { Component, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
-// Módulos de Angular Material
-import { MatTableModule } from '@angular/material/table';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatCardModule } from '@angular/material/card';
 
-// SweetAlert2
+
 import Swal from 'sweetalert2'; 
 import { ProductoService } from '../../Service/producto-service';
 import { ProductoDTO } from '../../interfaces/ProductoDTO';
 import { DialogProducto } from '../dialog/dialog-producto/dialog-producto';
-import { CreacionProductoDTO } from '../../interfaces/CreacionProductoDTO';
 import { EdicionProductoDTO } from '../../interfaces/EdicionProductoDTO';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {MatTooltipModule} from '@angular/material/tooltip';
 
-// Importaciones de DTOs y Servicios (Ajusta rutas si es necesario)
 
 
 @Component({
@@ -38,12 +34,12 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 export class Productos implements OnInit {
 
   searchControl = new FormControl('');
-  productos: ProductoDTO[] = []; // Todos los productos (16k)
-  productosMostrados: ProductoDTO[] = []; // Productos visibles (chunk + filtro)
+  productos: ProductoDTO[] = []; 
+  productosMostrados: ProductoDTO[] = []; 
   productoSeleccionado: ProductoDTO | null = null;
 
-  bloque = 50; // Cantidad a cargar por vez
-  indice = 0; // Índice del siguiente bloque
+  bloque = 50; 
+  indice = 0; 
   terminoBusquedaActual: string = ''; 
 
   constructor(
@@ -53,35 +49,31 @@ export class Productos implements OnInit {
 
   ngOnInit() {
     this.cargarTodosLosProductos();
-
-    // Lógica de filtrado y scroll infinito
+    
     this.searchControl.valueChanges.subscribe(term => {
       this.terminoBusquedaActual = term?.toLowerCase() || '';
       this.aplicarFiltro();
     });
   }
   
-  cargarTodosLosProductos(): void {
-    // Solo se llama al inicio para traer todo el catálogo (16k)
+  cargarTodosLosProductos(): void {    
     this.productoService.obtenerTodos().subscribe(result => {
       this.productos = result;
-      this.aplicarFiltro(); // Carga el primer bloque
+      this.aplicarFiltro(); 
     });
   }
 
   aplicarFiltro(): void {
     const valor = this.terminoBusquedaActual;
 
-    if (valor) {
-      // 1. Filtrar en la lista completa
+    if (valor) {      
       this.productosMostrados = this.productos
         .filter(p => 
           p.nombre.toLowerCase().includes(valor) || 
           p.codigo.toLowerCase().includes(valor)
         );
-      this.indice = this.productosMostrados.length; // Detiene el scroll infinito
-    } else {
-      // 2. Si no hay filtro, aplicamos scroll infinito
+      this.indice = this.productosMostrados.length; 
+    } else {      
       this.productosMostrados = this.productos.slice(0, this.bloque);
       this.indice = this.bloque;
     }
@@ -111,7 +103,6 @@ export class Productos implements OnInit {
     this.productoSeleccionado = producto;
   }
   
-  // --- LÓGICA DE ABM (Abre el Modal) ---
   
   abrirDialogo(producto?: ProductoDTO): void {
     const dialogoRef = this.dialog.open(DialogProducto, {
@@ -139,8 +130,7 @@ export class Productos implements OnInit {
     }
 
     obs.subscribe({
-      next: () => {
-        // La operación fue exitosa, recargamos la lista optimizada
+      next: () => {        
         this.cargarTodosLosProductos(); 
         Swal.fire(titulo, 'El producto se guardó correctamente.', 'success');
       },

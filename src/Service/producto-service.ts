@@ -25,25 +25,26 @@ export class ProductoService {
     return this.http.get<ProductoDTO[]>(`${this.apiUrl}`);
   }
   
-  /** Obtener producto por ID */
   obtenerPorId(id: number): Observable<ProductoDTO> {
     return this.http.get<ProductoDTO>(`${this.apiUrl}/${id}`);
   }
 
-  /** Crear un nuevo producto */
   crear(dto: CreacionProductoDTO): Observable<ProductoDTO> {
     return this.http.post<ProductoDTO>(this.apiUrl, dto);
   }
 
-  /** Actualizar un producto */
   actualizar(id: number, dto: EdicionProductoDTO): Observable<ProductoDTO> {
     return this.http.put<ProductoDTO>(`${this.apiUrl}/${id}`, dto);
   }
-
-  /** Eliminar un producto */
+  
   eliminar(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  buscarProductoPorCodigo(codigo: string): Observable<ProductoDTO> {
+  return this.http.get<ProductoDTO>(`${this.apiUrl}/buscar/${codigo}`);
+}
+
   
   
 }

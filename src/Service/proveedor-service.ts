@@ -13,10 +13,7 @@ export class ProveedorService {
   private apiUrl = `${environment.apiUrl}/Proveedor`;
 
 
-  constructor(private http:HttpClient){
-
-  }
-
+  constructor(private http:HttpClient){}
 
   obtenerTodos(): Observable<ProveedorDTO[]> {
     return this.http.get<ProveedorDTO[]>(`${this.apiUrl}`);    

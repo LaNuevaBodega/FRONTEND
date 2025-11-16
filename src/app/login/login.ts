@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router'; // 👈 importamos router
+import { Router } from '@angular/router';
 
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { CommonModule } from '@angular/common'; // 👈 necesario para *ngIf, etc.
+import { CommonModule } from '@angular/common'; 
 import { AuthService } from '../../Service/auth-service';
 import Swal from 'sweetalert2';
 
@@ -27,17 +27,17 @@ import Swal from 'sweetalert2';
 export class Login implements OnInit {
   loginForm!: FormGroup;
   submitting = false;
-  loginError: string | null = null; // 👈 Variable para mostrar errores al usuario
+  loginError: string | null = null; 
 
 
   constructor(
     private fb: FormBuilder, 
     private router: Router,
-    private authService: AuthService // 👈 INYECTAR EL SERVICIO
+    private authService: AuthService 
 
   
   
-  ) {} // 👈 inyectamos router
+  ) {} 
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -63,21 +63,18 @@ onSubmit() {
 
     this.authService.login(payload)
       .subscribe({
-        next: () => {
-          // 🟢 ÉXITO: Mostrar SweetAlert y luego redirigir
+        next: () => {          
           Swal.fire({
             icon: 'success',
             title: '¡Bienvenido!',
             text: 'Has iniciado sesión exitosamente.',
             showConfirmButton: false,
             timer: 1500
-          }).then(() => {
-            // Asegúrate de usar la ruta correcta a tu dashboard
+          }).then(() => {          
             this.router.navigate(['/app/ventas']); 
           });
         },
-        error: (err) => {
-          // 🔴 FALLO: Mostrar SweetAlert de error
+        error: (err) => {          
           this.submitting = false;
           let errorMessage = 'Error desconocido al intentar iniciar sesión.';
           

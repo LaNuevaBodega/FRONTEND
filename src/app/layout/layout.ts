@@ -34,12 +34,9 @@ export class Layout {
 
   }
 
-    onLogout() {
-    // 1. Llama al método para limpiar el token
+    onLogout() {    
     this.authService.logout();
 
-    // 2. Redirige al usuario a la página de login
-    // Esto también disparará el AuthGuard para prevenir el acceso a /app/*
     this.router.navigate(['/login']); 
   }
 

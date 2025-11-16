@@ -1,22 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
-// Módulos de Angular Material
+
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 
-// SweetAlert2
 import Swal from 'sweetalert2'; 
 import { ProveedorService } from '../../Service/proveedor-service';
 import { ProveedorDTO } from '../../interfaces/ProveedorDTO';
 import { DialogProveedor } from '../dialog/dialog-proveedor/dialog-proveedor';
 import { CrearProveedorDTO } from '../../interfaces/CrearProveedorDTO';
-
-// Importaciones de DTOs y Servicios (Ajusta rutas si es necesario)
-
 
 @Component({
   selector: 'app-proveedores',
