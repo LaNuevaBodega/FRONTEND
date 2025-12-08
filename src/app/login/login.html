@@ -1,33 +1,42 @@
 <div class="login-root">
-    <p-card class="login-card">
-        <div class="logo"> 
-            <img src="logo.png" alt="logo">
-        </div>
+  <p-card class="login-card">
 
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off" novalidate>
-            <div class="field">
-                <label for="email" class="sr-only">Email</label>
-                <input id="email" pInputText type="email" formControlName="email" placeholder="Email" autofocus />
-                <small class="error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
-                    <span *ngIf="loginForm.get('email')?.errors?.['required']">El email es obligatorio.</span>
-                    <span *ngIf="loginForm.get('email')?.errors?.['email']">Email inválido.</span>
-                </small>
+    <div class="logo">
+        <img src="logo.png" alt="logo">
+    </div>
 
-            </div>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off" novalidate>
+      
+      <div class="field">
+        <label for="identificador" class="sr-only">Usuario / Email</label>
+        <input id="identificador" pInputText type="text"
+          formControlName="identificador"
+          placeholder="Usuario o Email"
+          autofocus />
 
-            <div class="field">
-                <label for="password" class="sr-only">Contraseña</label>
-                <p-password id="password" formControlName="password" [feedback]="false"
-                    placeholder="Contraseña"></p-password>
-                <small class="error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
-                    <span *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es obligatoria.</span>
-                    <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Mínimo 6 caracteres.</span>
-                </small>
+        <small class="error" *ngIf="loginForm.get('identificador')?.touched && loginForm.get('identificador')?.invalid">
+          <span *ngIf="loginForm.get('identificador')?.errors?.['required']">
+            Este campo es obligatorio.
+          </span>
+        </small>
+      </div>
+      
+      <div class="field">
+        <label for="password" class="sr-only">Contraseña</label>
+        <p-password id="password" formControlName="password"
+          [feedback]="false" placeholder="Contraseña"></p-password>
 
-            </div>
+        <small class="error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+          <span *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es obligatoria.</span>
+          <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Mínimo 4 caracteres.</span>
+        </small>
+      </div>
 
-            <button pButton type="submit" label="Login" [disabled]="loginForm.invalid || submitting"
-                class="login-btn"></button>
-        </form>
-    </p-card>
+      <button pButton type="submit" label="Login"
+        [disabled]="loginForm.invalid || submitting"
+        class="login-btn"></button>
+
+    </form>
+
+  </p-card>
 </div>

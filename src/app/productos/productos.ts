@@ -1,27 +1,24 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
-
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import Swal from 'sweetalert2';
 
-
-import Swal from 'sweetalert2'; 
 import { ProductoService } from '../../Service/producto-service';
 import { ProductoDTO } from '../../interfaces/ProductoDTO';
 import { DialogProducto } from '../dialog/dialog-producto/dialog-producto';
 import { EdicionProductoDTO } from '../../interfaces/EdicionProductoDTO';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import {MatTooltipModule} from '@angular/material/tooltip';
-
-
+import { PagedResult } from '../../interfaces/PagedResult';
 
 @Component({
   selector: 'app-productos',
   standalone: true,
   imports: [
-     CommonModule,
+    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
@@ -29,81 +26,114 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     MatTooltipModule
   ],
   templateUrl: './productos.html',
-  styleUrl: './productos.scss'
+  styleUrls: ['./productos.scss']
 })
 export class Productos implements OnInit {
 
-  searchControl = new FormControl('');
-  productos: ProductoDTO[] = []; 
-  productosMostrados: ProductoDTO[] = []; 
+  @ViewChild('scrollContenedor') scrollContenedor!: ElementRef<HTMLDivElement>;
+
+  productos: ProductoDTO[] = [];
+  productosMostrados: ProductoDTO[] = [];
   productoSeleccionado: ProductoDTO | null = null;
 
-  bloque = 50; 
-  indice = 0; 
-  terminoBusquedaActual: string = ''; 
+  pagina = 1;
+  pageSize = 200;
+  totalRegistros = 0;
+  cargando = false;
+  noHayMas = false;
+
+  searchControl = new FormControl('');
+  terminoBusqueda = '';
 
   constructor(
     private productoService: ProductoService,
     private dialog: MatDialog
-  ) { }
+  ) {}
 
-  ngOnInit() {
-    this.cargarTodosLosProductos();
-    
-    this.searchControl.valueChanges.subscribe(term => {
-      this.terminoBusquedaActual = term?.toLowerCase() || '';
-      this.aplicarFiltro();
-    });
-  }
-  
-  cargarTodosLosProductos(): void {    
-    this.productoService.obtenerTodos().subscribe(result => {
-      this.productos = result;
-      this.aplicarFiltro(); 
-    });
+  ngOnInit(): void {
+    console.log('🟦 INIT COMPONENT Productos');
+    this.cargarPagina();
+
+    this.searchControl.valueChanges
+      .pipe(debounceTime(200), distinctUntilChanged())
+      .subscribe(value => {
+        this.terminoBusqueda = value?.toLowerCase() || '';
+        console.log('🔎 Filtro →', this.terminoBusqueda);
+        this.filtrarProductos();
+      });
   }
 
-  aplicarFiltro(): void {
-    const valor = this.terminoBusquedaActual;
+  cargarPagina(): void {
+    if (this.cargando || this.noHayMas) return;
 
-    if (valor) {      
-      this.productosMostrados = this.productos
-        .filter(p => 
-          p.nombre.toLowerCase().includes(valor) || 
-          p.codigo.toLowerCase().includes(valor)
-        );
-      this.indice = this.productosMostrados.length; 
-    } else {      
-      this.productosMostrados = this.productos.slice(0, this.bloque);
-      this.indice = this.bloque;
+    console.log(`📌 SOLICITANDO PÁGINA: ${this.pagina}`);
+    this.cargando = true;
+
+    this.productoService.obtenerPaginado(this.pagina, this.pageSize).subscribe({
+      next: (res: PagedResult<ProductoDTO>) => {
+        console.log('📥 RESPUESTA BACKEND:', res);
+
+        this.totalRegistros = res.total;
+        this.productos.push(...res.items);
+
+        console.log('📦 Total acumulado en memoria:', this.productos.length);
+
+        this.filtrarProductos();
+
+        this.pagina++;
+        if (this.productos.length >= this.totalRegistros) {
+          this.noHayMas = true;
+        }
+
+        this.cargando = false;
+      },
+      error: err => {
+        this.cargando = false;
+        Swal.fire('Error', 'No se pudieron cargar los productos.', 'error');
+      }
+    });
+  }
+
+  // Scroll real dentro del div de productos
+  onScrollDiv() {
+    const div = this.scrollContenedor.nativeElement;
+
+    const scrollTop = div.scrollTop;
+    const scrollHeight = div.scrollHeight;
+    const clientHeight = div.clientHeight;
+
+    const distancia = scrollHeight - (scrollTop + clientHeight);
+
+    console.log('📜 DIV SCROLL — distancia al fondo:', distancia);
+
+    if (distancia < 150 && !this.terminoBusqueda) {
+      console.log('⬇️ Cargando siguiente página...');
+      this.cargarPagina();
     }
-    this.productoSeleccionado = null;
   }
-  
-  cargarMas() {
-    if (this.terminoBusquedaActual !== '') {
+
+  filtrarProductos(): void {
+    if (!this.terminoBusqueda) {
+      this.productosMostrados = [...this.productos];
+      console.log('📌 Sin filtro — productos mostrados:', this.productosMostrados.length);
       return;
     }
-    
-    const siguienteBloque = this.productos.slice(this.indice, this.indice + this.bloque);
-    this.productosMostrados = [...this.productosMostrados, ...siguienteBloque];
-    this.indice += this.bloque;
-  }
 
-  @HostListener('window:scroll', [])
-  onScroll() {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
-      if (this.terminoBusquedaActual === '' && this.indice < this.productos.length) {
-        this.cargarMas();
-      }
-    }
+    const term = this.terminoBusqueda;
+
+    this.productosMostrados = this.productos.filter(p =>
+      (p.nombre?.toLowerCase().includes(term)) ||
+      (p.codigo?.toLowerCase().includes(term))
+    );
+
+    console.log('📌 Con filtro — productos mostrados:', this.productosMostrados.length);
+    this.productoSeleccionado = null;
   }
 
   seleccionarProducto(producto: ProductoDTO) {
     this.productoSeleccionado = producto;
   }
-  
-  
+
   abrirDialogo(producto?: ProductoDTO): void {
     const dialogoRef = this.dialog.open(DialogProducto, {
       width: '600px',
@@ -112,60 +142,53 @@ export class Productos implements OnInit {
 
     dialogoRef.afterClosed().subscribe((resultado: EdicionProductoDTO | undefined) => {
       if (resultado) {
-        this.procesarResultado(resultado, producto);
+        this.guardarCambios(resultado, producto);
       }
     });
   }
 
-  procesarResultado(data: EdicionProductoDTO, productoExistente?: ProductoDTO): void {
-    let obs: Observable<any>;
-    let titulo: string;
-
-    if (productoExistente && productoExistente.id) {
-      obs = this.productoService.actualizar(productoExistente.id, data);
-      titulo = '¡Actualización Exitosa!';
-    } else {
-      obs = this.productoService.crear(data as any); 
-      titulo = '¡Creación Exitosa!';
-    }
+  guardarCambios(data: EdicionProductoDTO, producto?: ProductoDTO): void {
+    const edita = !!producto;
+    const obs = edita
+      ? this.productoService.actualizar(producto!.id!, data)
+      : this.productoService.crear(data as any);
 
     obs.subscribe({
-      next: () => {        
-        this.cargarTodosLosProductos(); 
-        Swal.fire(titulo, 'El producto se guardó correctamente.', 'success');
+      next: () => {
+        Swal.fire(edita ? 'Actualizado' : 'Creado', 'El producto se guardó correctamente.', 'success');
+        this.resetearYRecargar();
       },
-      error: (err) => {
-        const errorMsg = err.error?.error || 'Ocurrió un error en la operación de guardado.';
-        Swal.fire('Error', errorMsg, 'error');
-      }
+      error: () => Swal.fire('Error', 'No se pudo guardar el producto.', 'error')
     });
   }
 
   eliminarProducto(producto: ProductoDTO): void {
-    if (!producto.id) return;
-
     Swal.fire({
       title: `¿Eliminar ${producto.nombre}?`,
-      text: "¡Esta acción es irreversible!",
+      text: "Esta acción es irreversible.",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: 'Eliminar',
       cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed && producto.id) {
-        this.productoService.eliminar(producto.id).subscribe({
+    }).then(r => {
+      if (r.isConfirmed) {
+        this.productoService.eliminar(producto.id!).subscribe({
           next: () => {
-            this.cargarTodosLosProductos(); // Recarga la lista
-            Swal.fire('Eliminado', `El producto ${producto.nombre} ha sido eliminado.`, 'success');
+            Swal.fire('Eliminado', 'Producto eliminado correctamente.', 'success');
+            this.resetearYRecargar();
           },
-          error: (err) => {
-            const errorMsg = err.error?.error || 'No se pudo eliminar el producto.';
-            Swal.fire('Error', errorMsg, 'error');
-          }
+          error: () => Swal.fire('Error', 'No se pudo eliminar el producto.', 'error')
         });
       }
     });
   }
 
-
+  private resetearYRecargar(): void {
+    this.productos = [];
+    this.productosMostrados = [];
+    this.pagina = 1;
+    this.noHayMas = false;
+    this.productoSeleccionado = null;
+    this.cargarPagina();
+  }
 }

@@ -1,0 +1,26 @@
+<div class="detalle-container" *ngIf="producto; else sinSeleccion">
+
+  <h3>{{ producto.nombre }}</h3>
+
+  <p><strong>Código:</strong> {{ producto.codigo }}</p>
+  <p><strong>Precio:</strong> ${{ producto.precioVenta }}</p>
+  <p><strong>Proveedor:</strong> {{ producto.proveedorNombre }}</p>
+  <p><strong>Rubro:</strong> {{ producto.rubroNombre }}</p>
+
+  <div class="acciones">
+    <button mat-raised-button color="primary" (click)="onEditar()">
+      <mat-icon>edit</mat-icon> Editar
+    </button>
+
+    <button mat-raised-button color="warn" (click)="onEliminar()">
+      <mat-icon>delete</mat-icon> Eliminar
+    </button>
+  </div>
+
+</div>
+
+<ng-template #sinSeleccion>
+  <div class="no-selection">
+    Seleccioná un producto.
+  </div>
+</ng-template>

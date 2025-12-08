@@ -1,0 +1,5 @@
+.productos-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  height: calc(100vh - 64px);
+}

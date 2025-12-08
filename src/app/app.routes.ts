@@ -8,10 +8,11 @@ import { Layout } from './layout/layout';
 import { Facturas } from './facturas/facturas';
 import { Productos } from './productos/productos';
 import { AuthGuard } from '../Service/auth.guard';
+import { ProductosPage } from './productos-page/productos-page';
 
 export const routes: Routes = [
         
-    { path: '', redirectTo: 'ventas', pathMatch: 'full' },
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: Login },
     
     {
@@ -24,10 +25,10 @@ export const routes: Routes = [
             { path: 'proveedores', component: Proveedores },
             { path: 'rubros', component: Rubros },
             { path: 'facturas', component: Facturas },
-            { path: 'productos', component: Productos },
+            { path: 'productos', component: ProductosPage },
             
         ]
     },
     
-    { path: '**', redirectTo: 'app/ventas' }
+    { path: '**', redirectTo: 'login' }
 ];

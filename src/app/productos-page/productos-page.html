@@ -1,0 +1,11 @@
+<div class="productos-layout">
+  
+  <app-product-list 
+  (productoSeleccionado)="onProductoSeleccionado($event)"
+  (agregar)="onAgregar()">
+  </app-product-list>
+  
+  <app-product-detail [producto]="productoSeleccionado" (editar)="onEditar($event)" (eliminar)="onEliminar($event)">
+  </app-product-detail>
+
+</div>

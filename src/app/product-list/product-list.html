@@ -1,0 +1,39 @@
+<div class="list-container">
+
+  <div class="header-lista">
+
+    <div class="buscador">
+      <input type="text" [formControl]="searchControl" placeholder="Buscar..." />
+    </div>
+
+    <button mat-raised-button color="primary" (click)="agregar.emit()">
+      <mat-icon>add</mat-icon> Agregar
+    </button>
+
+  </div>
+
+  <div class="tabla-productos" (scroll)="onScroll($event)">
+
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre / Código</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let p of productosFiltrados" (click)="seleccionar(p)">
+          <td>
+            <span class="nombre">{{ p.nombre }}</span>
+            <span class="codigo">({{ p.codigo }})</span>
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+
+    <div *ngIf="cargando" class="estado">Cargando...</div>
+    <div *ngIf="noHayMas && !cargando" class="estado">Fin</div>
+  </div>
+
+</div>

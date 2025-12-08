@@ -1,40 +1,73 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap, catchError, throwError } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 import { environment } from '../environments/environment';
+import { authResponse } from '../interfaces/LoginDTO/authResponse';
+import { loginRequest } from '../interfaces/LoginDTO/loginRequest';
 
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private apiUrl = `${environment.apiUrl}/Auth`;
+  private apiUrl = `${environment.apiUrl}/Auth`;  
+  private tokenKey = 'access_token';
 
-  constructor(
-    private http: HttpClient  ) { }
+  constructor(private http: HttpClient) {}
 
-login(credentials: any): Observable<{ token: string }> { 
-    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, credentials).pipe( 
-      tap((response) => {        
-        localStorage.setItem('jwt_token', response.token); 
-      })
-    );
-}
+  login(request: loginRequest): Observable<authResponse> {
+    return this.http.post<authResponse>(`${this.apiUrl}/login`, request, { withCredentials: true })
+      .pipe(
+        tap(response => {
+          if (response.token) {
+            localStorage.setItem(this.tokenKey, response.token);
+          }
+        })
+      );
+  }
+  
+  refreshToken(): Observable<authResponse> {
+    return this.http.post<authResponse>(`${this.apiUrl}/refresh-token`, {}, { withCredentials: true })
+      .pipe(
+        tap(res => {
+          localStorage.setItem(this.tokenKey, res.token);
+        }),
+        catchError(err => {
+          this.logout();
+          return throwError(() => err);
+        })
+      );
+  }
+
+  logout(): void {
+    localStorage.removeItem(this.tokenKey);
+  }
 
   getToken(): string | null {
-    return localStorage.getItem('jwt_token');
+    return localStorage.getItem(this.tokenKey);
   }
-  
+
   isLoggedIn(): boolean {
     const token = this.getToken();
-  
-    return !!token;
+    if (!token) return false;
+
+    try {
+      const decoded: any = jwtDecode(token);
+      return Date.now() < decoded.exp * 1000;
+    } catch {
+      return false;
+    }
   }
-  
-  logout(): void {
-    localStorage.removeItem('jwt_token');
+
+  getUserRole(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const decoded: any = jwtDecode(token);
+      return decoded.rol;
+    } catch {
+      return null;
+    }
   }
-  
 }

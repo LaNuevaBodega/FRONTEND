@@ -1,0 +1,52 @@
+.list-container {
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
+
+.buscador {
+  margin-bottom: 10px;
+
+  input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #bbb;
+  }
+}
+
+.tabla-productos {
+  height: calc(100vh - 150px);
+  overflow-y: auto;
+  border: 1px solid #eee;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead th {
+      background-color: #f5f5f5;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      padding: 10px;
+    }
+
+    tbody tr {
+      cursor: pointer;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .nombre {
+      font-weight: bold;
+    }
+
+    .codigo {
+      color: #777;
+      margin-left: 5px;
+    }
+  }
+}

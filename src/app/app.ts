@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { SignalRService } from '../Service/SignalRService';
 
 @Component({
   selector: 'app-root',
@@ -7,6 +8,14 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
+export class App implements OnInit {
+
   protected title = 'distribuidora';
+
+  constructor(private signalR: SignalRService) { }
+
+  ngOnInit(): void {
+    console.log('🟦 App inicializada → conectando SignalR...');    
+  }
+
 }

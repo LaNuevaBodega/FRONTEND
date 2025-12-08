@@ -20,6 +20,7 @@ import Swal from 'sweetalert2';
   styleUrl: './stock.scss'
 })
 export class Stock implements AfterViewInit {
+
   @Output() productoSeleccionadoParaCarrito = new EventEmitter<ProductoDTO>();
   @ViewChild('barcodeInput') barcodeInput!: ElementRef<HTMLInputElement>;
 
@@ -28,92 +29,160 @@ export class Stock implements AfterViewInit {
   productosMostrados: ProductoDTO[] = [];
   productoSeleccionado: ProductoDTO | null = null;
 
-  bloque = 50;
-  indice = 0;
+  private bloque = 50;
+  private indice = 0;
+
+  // Debounce del focus
+  private focusTimeout: any = null;
 
   constructor(private productoService: ProductoService) {}
 
   ngOnInit() {
-    // Cargar todos los productos
     this.productoService.obtenerTodos().subscribe(result => {
       this.productos = result;
       this.cargarMas();
     });
 
-    // Filtrado local
+    // Filtro del buscador
     this.searchControl.valueChanges.subscribe(term => {
-      const valor = term?.toLowerCase() || '';
+      const value = term?.toLowerCase() || '';
       this.productosMostrados = this.productos.filter(
-        p => p.nombre.toLowerCase().includes(valor) || p.codigo.toLowerCase().includes(valor)
+        p => p.nombre.toLowerCase().includes(value) || p.codigo.toLowerCase().includes(value)
       );
       this.indice = this.productosMostrados.length;
     });
   }
 
   ngAfterViewInit() {
-    // Pone foco en el input oculto para el escáner
-    setTimeout(() => this.barcodeInput.nativeElement.focus(), 500);
+    // Primer enfoque inmediato
+    setTimeout(() => this.forceFocus("afterViewInit-first"), 30);
+
+    // Reenfoque PRO estabilizado
+    setTimeout(() => this.solicitarFocus("afterViewInit-pro"), 300);
   }
 
-  // 🔹 Escaneo de producto con lector
+  // --------------------------------------------------------------------
+  // 🔥 TOASTS SIN ROBO DE FOCO
+  // --------------------------------------------------------------------
+  private toastBase(config: any) {
+    return Swal.fire({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      backdrop: false,
+      ...config,
+      didOpen: toast => {
+        toast.setAttribute('tabindex', '-1'); // EVITA tomar foco
+      }
+    });
+  }
+
+  private toastOk(producto: ProductoDTO) {
+    this.toastBase({
+      icon: 'success',
+      title: producto.nombre,
+      text: 'Agregado al carrito',
+      timer: 1200
+    });
+  }
+
+  private toastError(code: string) {
+    this.toastBase({
+      icon: 'error',
+      title: 'No encontrado',
+      text: `Código ${code}`,
+      timer: 1500
+    });
+  }
+
+  // --------------------------------------------------------------------
+  // 🎯 ESCANEO
+  // --------------------------------------------------------------------
   onBarcodeScanned(code: string) {
     const trimmed = code.trim();
     const producto = this.productos.find(p => p.codigo === trimmed);
 
     if (producto) {
-      // 🔹 Clonamos para forzar nueva referencia
-      const productoClonado = { ...producto };
-      this.productoSeleccionadoParaCarrito.emit(productoClonado);
+      this.productoSeleccionadoParaCarrito.emit({ ...producto });
       this.productoSeleccionado = producto;
-
-      Swal.fire({
-        icon: 'success',
-        title: producto.nombre,
-        text: 'Agregado al carrito',
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 1200
-      });
-
-      console.log('✅ Producto agregado desde escáner:', producto.nombre);
+      this.toastOk(producto);
     } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'No encontrado',
-        text: `No se encontró un producto con código ${trimmed}`,
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 1500
-      });
-      console.warn('❌ Producto no encontrado:', trimmed);
+      this.toastError(trimmed);
     }
 
-    // 🔹 Limpieza y reenfoque
+    // limpiar + reenfocar
     this.barcodeInput.nativeElement.value = '';
-    this.barcodeInput.nativeElement.focus();
+    this.solicitarFocus("afterScan");
   }
 
-  // 🔹 Scroll infinito
+  // --------------------------------------------------------------------
+  // 📜 SCROLL INFINITO
+  // --------------------------------------------------------------------
   cargarMas() {
-    const siguienteBloque = this.productos.slice(this.indice, this.indice + this.bloque);
-    this.productosMostrados = [...this.productosMostrados, ...siguienteBloque];
+    const lote = this.productos.slice(this.indice, this.indice + this.bloque);
+    this.productosMostrados = [...this.productosMostrados, ...lote];
     this.indice += this.bloque;
   }
 
-  @HostListener('window:scroll', [])
+  @HostListener('window:scroll')
   onScroll() {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
       if (this.indice < this.productos.length) {
         this.cargarMas();
       }
     }
+    this.solicitarFocus("scroll");
   }
 
-  // 🔹 Selección manual con click
+  // --------------------------------------------------------------------
+  // 🎯 SISTEMA DE FOCO PRO
+  // --------------------------------------------------------------------
+  private solicitarFocus(origen: string) {
+    if (!this.barcodeInput) return;
+
+    if (this.focusTimeout) clearTimeout(this.focusTimeout);
+
+    this.focusTimeout = setTimeout(() => {
+      this.forceFocus(origen);
+      this.focusTimeout = null;
+    }, 120);
+  }
+
+  private forceFocus(origen: string) {
+    const el = this.barcodeInput.nativeElement;
+    el.focus();
+  }
+
+  // --------------------------------------------------------------------
+  // ⌨️ MANEJO GLOBAL DEL TECLADO
+  // --------------------------------------------------------------------
+  @HostListener('document:keydown', ['$event'])
+  onKey(e: KeyboardEvent) {
+    if (!this.barcodeInput) return;
+
+    const active = document.activeElement;
+    const target = this.barcodeInput.nativeElement;
+
+    // Si NO estoy en el input → evitar que escriba en otro lado
+    if (active !== target) {
+      e.preventDefault();
+      this.solicitarFocus("global-keydown");
+      return;
+    }
+
+    // Si sí estoy enfocado → todo normal
+  }
+
+  @HostListener('document:click')
+  onClick() {
+    this.solicitarFocus("click");
+  }
+
+  // --------------------------------------------------------------------
+  // 🖱 Selección manual desde la lista
+  // --------------------------------------------------------------------
   seleccionarProducto(producto: ProductoDTO) {
     this.productoSeleccionado = producto;
-    this.productoSeleccionadoParaCarrito.emit({ ...producto }); // también clonado
+    this.productoSeleccionadoParaCarrito.emit({ ...producto });
   }
 }

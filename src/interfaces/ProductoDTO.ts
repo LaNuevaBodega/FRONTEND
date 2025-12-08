@@ -3,6 +3,7 @@ export interface ProductoDTO {
   codigo: string;
   nombre: string;
   precioVenta: number;
+  precioCosto:number;
   proveedorNombre?: string;
   rubroNombre?: string;
 }

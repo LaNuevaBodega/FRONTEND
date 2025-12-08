@@ -1,89 +1,116 @@
+/* 🎯 BUSCADOR */
 .buscador {
   margin-bottom: 1rem;
+
   input {
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.6rem;
     font-size: 1rem;
-    box-sizing: border-box;
+    border: 1px solid #b4b4b4;
+    border-radius: 4px;
+    background-color: #f4f4f4;
+    color: #333;
+
+    &:focus {
+      outline: none;
+      border-color: #800020;   // bordó oscuro
+      box-shadow: 0 0 4px rgba(128, 0, 32, 0.4);
+    }
   }
 }
 
+/* 🧾 TABLA */
 .tabla-productos {
-  max-height: 700px; // altura fija, cambia según convenga
-  overflow-y: auto; // scroll vertical
-  border: 1px solid #ccc;
+  max-height: 700px;
+  overflow-y: auto;
+  border: 1px solid #b4b4b4;
+  border-radius: 4px;
   margin-bottom: 1rem;
 
   table {
     width: 100%;
     border-collapse: collapse;
     cursor: pointer;
+    font-size: 1rem;
 
     th, td {
-      padding: 0.5rem;
-      border: 1px solid #ddd;
+      padding: 0.6rem;
+      border-bottom: 1px solid #dcdcdc;
     }
 
+    /* 🔝 HEADER gris oscuro */
     th {
-      background-color: #f5f5f5;
+      background-color: #e0e0e0;
+      color: #333;
       text-align: left;
-      position: sticky; // mantiene el header visible
+      position: sticky;
       top: 0;
-      z-index: 1;
+      z-index: 2;
+      font-weight: bold;
     }
 
+    /* ⚪ Filas alternadas gris suave */
     tr:nth-child(even) {
-      background-color: #fafafa;
+      background-color: #f7f7f7;
     }
 
+    /* 🔴 Hover */
+    tr:hover {
+      background-color: #f2d6de;        // gris con tinte bordó
+      transition: 0.15s ease;
+    }
+
+    /* 🔥 Seleccionado: bordó */
     tr.seleccionado {
-      background-color: #d0ebff;
+      background-color: #800020 !important;   // bordó
+      color: white;
+
+      td {
+        font-weight: bold;
+      }
     }
   }
 }
 
+/* 📦 DETALLE DEL PRODUCTO */
 .detalle-producto {
   margin-top: 1rem;
-  font-size: 1rem;
-  padding: 0.5rem;
-  border: 1px solid #aaa;
-  background-color: black;
-  border-radius: 4px;
+  padding: 0.8rem;
+  border-radius: 6px;
+  background-color: #1a1a1a;
+  border: 1px solid #800020;
 
   strong {
+    color: #ffffff;
+    font-size: 1.4rem;
+    margin-bottom: 0.7rem;
     display: block;
-    font-size: 1.3rem;
-    margin-bottom: 0.5rem;
-    color:white; // nombre más destacado
   }
 
   .detalle-codigo-precio {
     display: flex;
     gap: 1rem;
-    width: 100%;
 
-    .detalle-codigo, .detalle-precio {
+    .detalle-codigo,
+    .detalle-precio {
       flex: 1;
-      padding: 0.7rem;
-      background-color: #007BFF; // azul más intenso
+      padding: 1rem;
       text-align: center;
-      border-radius: 4px;
-      color: #fff; // texto blanco para contraste
+      border-radius: 6px;
+
+      /* 🔴 Bordó con degradado suave */
+      background: linear-gradient(135deg, #800020, #a00030);
+      color: white;
 
       span {
-        display: block;
-        font-size: 0.9rem;
         font-weight: bold;
-        margin-bottom: 0.2rem;
+        font-size: 0.9rem;
+        opacity: 0.9;
       }
 
       strong {
-        font-size: 1.5rem;
-        font-weight: bold;
+        font-size: 1.6rem;
       }
     }
   }
 }
-
-
-

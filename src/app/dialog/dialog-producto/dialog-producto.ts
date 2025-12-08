@@ -45,7 +45,7 @@ export class DialogProducto implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cargarDatosIniciales();
+    this.cargarDatosIniciales();      
     
     const idRubroInicial = (this.data as any)?.idRubro || 0;
     const idProveedorInicial = (this.data as any)?.idProveedor || 0;
@@ -53,11 +53,25 @@ export class DialogProducto implements OnInit {
     this.productoForm = this.fb.group({
       codigo: [this.data?.codigo || '', Validators.required],
       nombre: [this.data?.nombre || '', Validators.required],
-      precioCosto: [(this.data as any)?.precioCosto || 0, [Validators.required, Validators.min(0.01)]],
+      precioCosto: [this.data?.precioCosto || 0, [Validators.required, Validators.min(0.01)]],  
       precioVenta: [this.data?.precioVenta || 0, [Validators.required, Validators.min(0.01)]],
       idProveedor: [idProveedorInicial, [Validators.required, Validators.min(1)]],
       idRubro: [idRubroInicial, [Validators.required, Validators.min(1)]]
     });
+
+      this.rubros$.subscribe(rubros => {
+    const rubroSeleccionado = rubros.find(r => r.nombre === this.data?.rubroNombre);
+    if (rubroSeleccionado) {
+      this.productoForm.patchValue({ idRubro: rubroSeleccionado.id });
+    }
+  });
+
+  this.proveedores$.subscribe(proveedores => {
+    const proveedorSeleccionado = proveedores.find(p => p.nombre === this.data?.proveedorNombre);
+    if (proveedorSeleccionado) {
+      this.productoForm.patchValue({ idProveedor: proveedorSeleccionado.id });
+    }
+  });
   }
 
   cargarDatosIniciales(): void {    
