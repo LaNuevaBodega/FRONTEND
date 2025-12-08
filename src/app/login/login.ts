@@ -1,17 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
-import { PasswordModule } from 'primeng/password';
-import { CommonModule } from '@angular/common';
-
 import { AuthService } from '../../Service/auth-service';
 import Swal from 'sweetalert2';
 import { loginRequest } from '../../interfaces/LoginDTO/loginRequest';
-
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -19,10 +17,11 @@ import { loginRequest } from '../../interfaces/LoginDTO/loginRequest';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    InputTextModule,
-    PasswordModule,
-    ButtonModule,
-    CardModule
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatFormFieldModule
   ],
   templateUrl: './login.html',
   styleUrls: ['./login.scss']
@@ -30,7 +29,7 @@ import { loginRequest } from '../../interfaces/LoginDTO/loginRequest';
 export class Login implements OnInit {
 
   loginForm!: FormGroup;
-  submitting = false;
+  submitting = false;   
 
   constructor(
     private fb: FormBuilder,

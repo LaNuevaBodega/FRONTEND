@@ -1,6 +1,4 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { CarritoItem } from '../../interfaces/CarritoItem';
 import { ProductoDTO } from '../../interfaces/ProductoDTO';
@@ -10,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-carrito',
   standalone: true,
-  imports: [CommonModule, TableModule, ButtonModule],
+  imports: [CommonModule],
   templateUrl: './carrito.html',
   styleUrls: ['./carrito.scss']
 })
@@ -18,7 +16,8 @@ export class Carrito {
 
   carrito: CarritoItem[] = [];
 
-  constructor(private dialog: MatDialog,
+  constructor(
+    private dialog: MatDialog,
     private cdr: ChangeDetectorRef
   ) {}
   

@@ -14,8 +14,7 @@ export class App implements OnInit {
 
   constructor(private signalR: SignalRService) { }
 
-  ngOnInit(): void {
-    console.log('🟦 App inicializada → conectando SignalR...');    
+  ngOnInit(): void {    
   }
 
 }

@@ -1,42 +1,30 @@
 <div class="login-root">
-  <p-card class="login-card">
-
+  <mat-card class="login-card">
     <div class="logo">
-        <img src="logo.png" alt="logo">
+      <img src="logo.png" alt="logo">
     </div>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off" novalidate>
       
-      <div class="field">
-        <label for="identificador" class="sr-only">Usuario / Email</label>
-        <input id="identificador" pInputText type="text"
-          formControlName="identificador"
-          placeholder="Usuario o Email"
-          autofocus />
-
-        <small class="error" *ngIf="loginForm.get('identificador')?.touched && loginForm.get('identificador')?.invalid">
-          <span *ngIf="loginForm.get('identificador')?.errors?.['required']">
-            Este campo es obligatorio.
-          </span>
-        </small>
-      </div>
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Usuario o Email</mat-label>
+        <input matInput formControlName="identificador" placeholder="Usuario o Email" required>
+        <mat-error *ngIf="f['identificador']?.touched && f['identificador']?.invalid">
+          <span *ngIf="f['identificador']?.errors?.['required']">Este campo es obligatorio.</span>
+        </mat-error>
+      </mat-form-field>
       
-      <div class="field">
-        <label for="password" class="sr-only">Contraseña</label>
-        <p-password id="password" formControlName="password"
-          [feedback]="false" placeholder="Contraseña"></p-password>
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Contraseña</mat-label>
+        <input matInput type="password" formControlName="password" placeholder="Contraseña" required minlength="4">
+        <mat-error *ngIf="f['password']?.touched && f['password']?.invalid">
+          <span *ngIf="f['password']?.errors?.['required']">La contraseña es obligatoria.</span>
+          <span *ngIf="f['password']?.errors?.['minlength']">Mínimo 4 caracteres.</span>
+        </mat-error>
+      </mat-form-field>
 
-        <small class="error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
-          <span *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es obligatoria.</span>
-          <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Mínimo 4 caracteres.</span>
-        </small>
-      </div>
-
-      <button pButton type="submit" label="Login"
-        [disabled]="loginForm.invalid || submitting"
-        class="login-btn"></button>
-
+      <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || submitting" class="login-btn">Login</button>
     </form>
-
-  </p-card>
+  </mat-card>
 </div>
+  
