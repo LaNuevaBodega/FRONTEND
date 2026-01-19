@@ -1,87 +1,68 @@
-/* Root ocupa toda la pantalla y centra el card */
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f6f7f9;
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
 .login-root {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f5f7fb;
-    font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Card con borde y sombra más simples */
 .login-card {
-    width: 100%;
-    max-width: 400px;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+  width: 100%;
+  max-width: 380px;
+  padding: 32px 28px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
 
-/* Logo centrado con espaciado adecuado */
 .logo {
-    margin: 0 auto 1.5rem;
-    display: flex;
-    justify-content: center;
-
-    img {
-        max-width: 180px;
-        height: auto;
-    }
+  display: flex;
+  justify-content: center;  
+  img {
+    height: 200px;
+    object-fit: contain;
+  }
 }
 
-/* Estilo de los campos de entrada */
+h2 {
+  text-align: center;
+  margin: 8px 0 4px;
+  font-size: 22px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
 .field {
-    width: 100%;
-    margin-bottom: 20px;
+  width: 100%;
+  margin-bottom: 14px;
 }
 
-mat-form-field {
-    width: 100%;
-    font-size: 14px;
+::ng-deep .mat-mdc-text-field-wrapper {
+  border-radius: 8px;
 }
 
-input {
-    font-size: 16px;
-    padding: 10px;
-}
-
-/* Estilo del botón */
 .login-btn {
-    width: 100%;
-    height: 45px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    background-color: #3f51b5;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.login-btn:hover {
-    background-color: #303f9f;
+  width: 100%;
+  height: 44px;
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 8px;
 }
 
 .login-btn:disabled {
-    background-color: #c5cae9;
-    cursor: not-allowed;
-}
-
-/* Errores de los campos */
-.mat-error {
-    font-size: 13px;
-    color: #c53030;
-    margin-top: 4px;
-}
-
-/* Estilos para pantallas más pequeñas */
-@media (max-width: 600px) {
-    .login-card {
-        width: 90%;
-        padding: 20px;
-    }
+  background-color: #9ca3af !important;
+  color: #f9fafb !important;
 }

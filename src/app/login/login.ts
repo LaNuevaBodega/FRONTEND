@@ -35,7 +35,7 @@ export class Login implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -60,10 +60,16 @@ export class Login implements OnInit {
     this.authService.login(payload).subscribe({
       next: () => {
         Swal.fire({
+          toast: true,
+          position: 'top-end',
           icon: 'success',
-          title: '¡Bienvenido!',
+          title: 'Sesión iniciada',
           showConfirmButton: false,
-          timer: 1200
+          timer: 700,
+          timerProgressBar: true,
+          background: '#ffffff',
+          color: '#1f2937',
+          iconColor: '#16a34a'
         }).then(() => {
           this.router.navigate(['/app/ventas']);
         });
@@ -72,11 +78,15 @@ export class Login implements OnInit {
         this.submitting = false;
 
         Swal.fire({
+          toast: true,
+          position: 'top-end',
           icon: 'error',
-          title: 'Error de acceso',
-          text: err.status === 401
-            ? 'Usuario o contraseña incorrectos'
-            : 'Error inesperado'
+          title: 'Credenciales incorrectas',
+          showConfirmButton: false,
+          timer: 2000,
+          background: '#ffffff',
+          color: '#1f2937',
+          iconColor: '#dc2626'
         });
 
         console.error('Login error:', err);

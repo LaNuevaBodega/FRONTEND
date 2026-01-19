@@ -22,8 +22,8 @@ export class Carrito {
 
   constructor(
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef,    
-    
+    private cdr: ChangeDetectorRef,
+
   ) { }
   @Output() confirmarVenta = new EventEmitter<CrearVentaDTO>();
 
@@ -61,7 +61,9 @@ export class Carrito {
 
   abrirDialogoPago(): void {
     const dialogRef = this.dialog.open(DialogPago, {
-      width: '650px'
+      width: '600px',
+      maxWidth: '90vw',
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(metodoDePagoId => {
@@ -74,12 +76,12 @@ export class Carrito {
           cantidad: item.cantidad
         }))
       };
-      
+
       this.confirmarVenta.emit(ventaDto);
 
       this.carrito = [];
       this.cdr.detectChanges();
-      
+
     });
   }
 }

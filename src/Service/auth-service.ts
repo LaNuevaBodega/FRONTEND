@@ -44,8 +44,19 @@ export class AuthService {
       );
   }
 
-  // 🚪 LOGOUT
-  logout(): void {
+  logout() {
+    return this.http.post(`${this.apiUrl}/logout`, {}).pipe(
+      tap(() => {
+        // solo si el backend permite
+        localStorage.removeItem(this.tokenKey);
+      })
+    );
+
+
+  }
+
+
+  forceLogout() {
     localStorage.removeItem(this.tokenKey);
   }
 
@@ -107,7 +118,7 @@ export class AuthService {
   private get payload(): TokenPayload | null {
     if (!this.token) return null;
     try {
-      const decoded = jwtDecode<any>(this.token);      
+      const decoded = jwtDecode<any>(this.token);
       return decoded;
     } catch {
       return null;

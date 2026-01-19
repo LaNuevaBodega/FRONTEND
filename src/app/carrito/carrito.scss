@@ -12,8 +12,8 @@
   }
 
   .tabla-carrito-wrapper {
-    flex: 1; // ocupa todo el espacio vertical restante
-    overflow-y: auto; // scroll vertical cuando se acumulan muchos productos
+    flex: 1; 
+    overflow-y: auto; 
     margin-bottom: 0.5rem;
 
     table {

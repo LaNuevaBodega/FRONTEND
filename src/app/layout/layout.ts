@@ -1,21 +1,22 @@
 import { Component, HostBinding, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AuthService } from '../../Service/auth-service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-main-layout',
-  standalone: true, 
+  standalone: true,
   imports: [
     CommonModule,
-    RouterOutlet,     
+    RouterOutlet,
     RouterLink,
-    RouterLinkActive,        
+    RouterLinkActive,
     MatSidenavModule,
     MatListModule,
     MatIconModule,
@@ -28,20 +29,43 @@ import { AuthService } from '../../Service/auth-service';
 export class Layout {
 
   constructor(
-    public authService : AuthService,    
+    public authService: AuthService,
     private router: Router,
-  ){
+  ) {
 
   }
 
-    onLogout() {    
-    this.authService.logout();
+  onLogout() {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: err => {
 
-    this.router.navigate(['/login']); 
+        if (err.status === 401) {
+          Swal.fire(
+            'Sesión inválida',
+            'Tu sesión expiró, iniciá sesión nuevamente',
+            'info'
+          );
+          this.authService.forceLogout();
+          this.router.navigate(['/login']);
+          return;
+        }
+
+        Swal.fire(
+          'Caja abierta',
+          err.error ?? 'Debe cerrar la caja antes de cerrar sesión',
+          'warning'
+        );
+      }
+    });
   }
+
+
 
   isSidebarOpen = signal(false);
-  
+
   toggleSidebar(open?: boolean) {
     if (open !== undefined) {
       this.isSidebarOpen.set(open);

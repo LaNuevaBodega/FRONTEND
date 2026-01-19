@@ -3,15 +3,17 @@
 <div class="metodos">
   <button
     mat-raised-button
-    *ngFor="let m of metodos"
+    *ngFor="let m of metodos; let i = index"
     (click)="seleccionarPago(m.id)"
-    [color]="metodoSeleccionadoId === m.id ? 'primary' : undefined">
-    {{ m.nombre }}
+    [class.seleccionado]="metodoSeleccionadoId === m.id">
+
+    {{ m.nombre }} ({{ i + 1 }})
   </button>
 </div>
 
 <div class="acciones">
   <button mat-button (click)="onCancel()">Cancelar</button>
+
   <button
     mat-raised-button
     color="primary"
