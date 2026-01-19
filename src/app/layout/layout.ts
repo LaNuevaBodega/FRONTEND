@@ -28,7 +28,7 @@ import { AuthService } from '../../Service/auth-service';
 export class Layout {
 
   constructor(
-    private authService : AuthService,
+    public authService : AuthService,    
     private router: Router,
   ){
 

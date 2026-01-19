@@ -1,13 +1,25 @@
 <div class="ventas-workspace">
 
+  <div class="caja-bar">
+    <mat-slide-toggle
+      [checked]="!!cajaAbierta"
+      [disabled]="cargandoCaja"
+      (change)="onToggleCaja($event)">
+      Caja {{ cajaAbierta ? 'Abierta' : 'Cerrada' }}
+    </mat-slide-toggle>
+  </div>  
+
   <div class="productos-panel">
-    <h2></h2>
-    <app-stock (productoSeleccionadoParaCarrito)="carrito.agregarProducto($event)"></app-stock>
+    <app-stock
+      (productoSeleccionadoParaCarrito)="carrito.agregarProducto($event)">
+    </app-stock>
   </div>
 
   <div class="carrito-panel">
-    <h2></h2>
-    <app-carrito #carrito></app-carrito>
+    <app-carrito
+      #carrito
+      (confirmarVenta)="crearVenta($event)">
+    </app-carrito>
   </div>
 
 </div>

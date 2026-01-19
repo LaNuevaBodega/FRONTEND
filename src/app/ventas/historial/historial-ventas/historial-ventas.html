@@ -1,0 +1,55 @@
+<h2>Historial de ventas</h2>
+<div class="filtros">
+    <label> Desde: <input type="date" [(ngModel)]="desde">
+    </label> <label> Hasta: <input type="date" [(ngModel)]="hasta"> </label>
+    <!-- SOLO ADMIN -->
+    <label *ngIf="esAdmin">
+        Usuario:
+        <select [(ngModel)]="usuarioSeleccionado">
+            <option value="">Todos</option>
+            <option *ngFor="let u of usuarios" [value]="u">
+                {{ u }}
+            </option>
+        </select>
+    </label>
+
+    <label *ngIf="esAdmin">
+        Máquina:
+        <select [(ngModel)]="maquinaSeleccionada">
+            <option value="">Todas</option>
+            <option *ngFor="let m of maquinas" [value]="m">
+                {{ m }}
+            </option>
+        </select>
+    </label>
+
+
+
+    <button (click)="buscar()">Buscar</button>
+</div>
+<div *ngIf="ventas.length > 0">
+    <table>
+        <thead>
+            <tr>
+                <th>N°</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Método</th>
+                <th>Usuario</th>
+                <th>Máquina</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let v of ventas">
+                <td>{{ v.numeroVenta }}</td>
+                <td>{{ v.fechaHora | date:'short' }}</td>
+                <td>${{ v.total }}</td>
+                <td>{{ v.metodoDePago }}</td>
+                <td>{{ v.usuario }}</td>
+                <td>{{ v.maquinaId }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3>Total del período: ${{ totalDia }}</h3>
+</div>
+<div *ngIf="ventas.length === 0 && !cargando"> <em>No hay ventas</em> </div>

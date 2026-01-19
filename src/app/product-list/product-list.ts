@@ -126,9 +126,6 @@ export class ProductList implements OnInit, OnDestroy {
     }
   }
 
-
-
-
   seleccionar(p: ProductoDTO): void {
     this.productoSeleccionado.emit(p);
   }

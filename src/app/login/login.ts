@@ -1,15 +1,15 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../Service/auth-service';
+
 import Swal from 'sweetalert2';
-import { loginRequest } from '../../interfaces/LoginDTO/loginRequest';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../Service/auth-service';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +29,7 @@ import { CommonModule } from '@angular/common';
 export class Login implements OnInit {
 
   loginForm!: FormGroup;
-  submitting = false;   
+  submitting = false;
 
   constructor(
     private fb: FormBuilder,
@@ -39,12 +39,12 @@ export class Login implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      identificador: ['', [Validators.required]],    // email o username
+      identificador: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(4)]]
     });
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
@@ -52,9 +52,9 @@ export class Login implements OnInit {
 
     this.submitting = true;
 
-    const payload: loginRequest = {
-      Identificador: this.loginForm.value.identificador,
-      Password: this.loginForm.value.password
+    const payload = {
+      identificador: this.loginForm.value.identificador,
+      password: this.loginForm.value.password
     };
 
     this.authService.login(payload).subscribe({
@@ -62,9 +62,8 @@ export class Login implements OnInit {
         Swal.fire({
           icon: 'success',
           title: '¡Bienvenido!',
-          text: 'Has iniciado sesión exitosamente.',
           showConfirmButton: false,
-          timer: 1500
+          timer: 1200
         }).then(() => {
           this.router.navigate(['/app/ventas']);
         });
@@ -72,18 +71,15 @@ export class Login implements OnInit {
       error: (err) => {
         this.submitting = false;
 
-        let errorMessage = 'Error desconocido.';
-        if (err.status === 401) {
-          errorMessage = 'Usuario o contraseña incorrectos.';
-        }
-
         Swal.fire({
           icon: 'error',
-          title: 'Error de Acceso',
-          text: errorMessage
+          title: 'Error de acceso',
+          text: err.status === 401
+            ? 'Usuario o contraseña incorrectos'
+            : 'Error inesperado'
         });
 
-        console.error('Error de Login:', err);
+        console.error('Login error:', err);
       },
       complete: () => {
         this.submitting = false;

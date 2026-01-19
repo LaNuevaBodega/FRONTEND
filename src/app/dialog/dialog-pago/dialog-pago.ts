@@ -1,10 +1,12 @@
 
 import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
+import { MetodoDePagoService } from '../../../Service/metodo-de-pago-service';
+import { MetodoPagoDTO } from '../../../interfaces/MetodoDePagoDTO/MetodoPagoDTO';
 
 @Component({
   selector: 'app-dialog-pago',
@@ -18,26 +20,29 @@ import Swal from 'sweetalert2';
   templateUrl: './dialog-pago.html',
   styleUrl: './dialog-pago.scss'
 })
-export class DialogPago {
+export class DialogPago implements OnInit {
 
-  paymentOptions = [
-    { name: 'EFECTIVO', label: 'EFECTIVO', icon: '💵', colorClass: 'color-green' },
-    { name: 'QR', label: 'CÓDIGO QR', icon: '📱', colorClass: 'color-blue' },
-    { name: 'TARJETA', label: 'TARJETA', icon: '💳', colorClass: 'color-red' }
-  ];
+  metodos: MetodoPagoDTO[] = [];
+  metodoSeleccionadoId: number | null = null;
 
-    qrImageUrl: string = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=EjemploPagoQR';
-
-
-  selectedMethod: string | null = null;
-  
   constructor(
-    public dialogRef: MatDialogRef<DialogPago>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogPago | undefined 
-  ) {}
+    private dialogRef: MatDialogRef<DialogPago>,
+    private metodoPagoService: MetodoDePagoService
+  ) { }
 
-  seleccionarPago(method: string): void {
-    this.selectedMethod = method;
+  ngOnInit(): void {
+    this.metodoPagoService.obtenerActivos().subscribe({
+      next: res => this.metodos = res,
+      error: err => {
+        console.error('Error al cargar métodos de pago', err);
+        Swal.fire('Error', 'No se pudieron cargar los métodos de pago', 'error');
+        this.dialogRef.close(null);
+      }
+    });
+  }
+
+  seleccionarPago(id: number): void {
+    this.metodoSeleccionadoId = id;
   }
 
   onCancel(): void {
@@ -45,16 +50,15 @@ export class DialogPago {
   }
 
   async onConfirm(): Promise<void> {
-    if (this.selectedMethod) {
-      await Swal.fire({
-        title: '¡Pago Exitoso! 🎉',
-        text: `Tu pago con ${this.selectedMethod} fue procesado correctamente.`,
-        icon: 'success',
-        confirmButtonText: 'Aceptar',
-        confirmButtonColor: '#3f51b5'
-      });
-      
-      this.dialogRef.close(this.selectedMethod);
-    }
+    if (!this.metodoSeleccionadoId) return;
+
+    await Swal.fire({
+      title: '¡Pago registrado! 🎉',
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#3f51b5'
+    });
+
+    this.dialogRef.close(this.metodoSeleccionadoId);
   }
 }

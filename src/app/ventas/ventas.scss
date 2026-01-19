@@ -1,23 +1,37 @@
 .ventas-workspace {
+  position: relative; // 🔑 para posicionar la caja-bar
   display: flex;
   flex-direction: row;
-  align-items: flex-start;  // alineado al top
+  align-items: flex-start;
   gap: 1rem;
   padding: 1rem;
+  height: calc(100vh - 64px); // ajustá si tenés toolbar
+  overflow: hidden; // 🚫 elimina scroll general
+
+  .caja-bar {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10;
+    background: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
 
   .productos-panel {
-    flex: 2;            // ocupa más espacio
-    min-width: 50%;   // ancho mínimo
+    flex: 2;
     display: flex;
     flex-direction: column;
-    height: 80vh;       // fuerza altura para que quede al mismo nivel que carrito
+    height: 100%;
+    overflow: hidden; // 🚫 evita scroll extra
   }
 
   .carrito-panel {
-    flex: 1;            // ocupa menos espacio
-    min-width: 50%;
+    flex: 1;
     display: flex;
     flex-direction: column;
-    height: 80vh;
+    height: 100%;
+    overflow: hidden;
   }
 }
