@@ -1,15 +1,18 @@
-import { Component, OnInit } from "@angular/core";
-import { Carrito } from "../carrito/carrito";
+import { Component, HostListener, OnInit, ViewChild } from "@angular/core";
+import { Carrito, PedidoVenta } from "../carrito/carrito";
 import { Stock } from "../stock/stock";
 import { CajaDTO } from "../../interfaces/CajaDTO/CajaDTO";
 import { CajaService } from "../../Service/caja-service";
 import { VentasService } from "../../Service/ventas-service";
 import { MatDialog } from "@angular/material/dialog";
-
 import Swal from "sweetalert2";
-import { DialogAbrirCaja } from "../dialog/dialog-abrir-caja/dialog-abrir-caja";
 import { MatSlideToggleChange, MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { CrearVentaDTO } from "../../interfaces/Ventas/VentaDTO/CrearVentaDTO";
+import { TicketService } from "../../Service/ticket-service";
+import { FacturaService } from "../../Service/factura-service";
+import { TicketServiceArca } from "../../Service/ticket-service-arca";
+import { DialogAbrirCaja } from "../dialog/dialog-abrir-caja/dialog-abrir-caja";
+import { DialogCerrarCaja } from "../dialog/dialog-cerrar-caja/dialog-cerrar-caja";
+import { DialogRetirarDinero } from "../dialog/dialog-retirar-dinero/dialog-retirar-dinero";
 
 @Component({
   selector: 'app-ventas',
@@ -24,12 +27,18 @@ import { CrearVentaDTO } from "../../interfaces/Ventas/VentaDTO/CrearVentaDTO";
 })
 export class Ventas implements OnInit {
 
-  cajaAbierta: CajaDTO | null = null;
+  @ViewChild(Carrito) carrito!: Carrito;
+
+  get cajaAbierta(): CajaDTO | null { return this.cajaService.cajaActual; }
+  set cajaAbierta(v: CajaDTO | null) { this.cajaService.cajaActual = v; }
   cargandoCaja = true;
-  
+
   constructor(
     private cajaService: CajaService,
     private ventasService: VentasService,
+    private ticketService: TicketService,
+    private ticketServiceArca: TicketServiceArca,
+    private facturaService: FacturaService,
     private dialog: MatDialog
   ) { }
 
@@ -39,14 +48,8 @@ export class Ventas implements OnInit {
 
   cargarEstadoCaja() {
     this.cajaService.obtenerCajaAbierta().subscribe({
-      next: caja => {
-        this.cajaAbierta = caja;
-        this.cargandoCaja = false;
-      },
-      error: () => {
-        this.cajaAbierta = null;
-        this.cargandoCaja = false;
-      }
+      next: caja => { this.cajaAbierta = caja; this.cargandoCaja = false; },
+      error: () => { this.cajaAbierta = null; this.cargandoCaja = false; }
     });
   }
 
@@ -59,120 +62,91 @@ export class Ventas implements OnInit {
   }
 
   abrirCaja() {
-    this.cajaService.abrirCaja(0).subscribe({
-      next: caja => this.cajaAbierta = caja
+    const ref = this.dialog.open(DialogAbrirCaja, { disableClose: true });
+    ref.afterClosed().subscribe(monto => {
+      if (monto === null || monto === undefined) return;
+      this.cajaService.abrirCaja(Number(monto)).subscribe({
+        next: caja => { this.cajaAbierta = caja; },
+        error: err => { Swal.fire('Error', err.error?.mensaje ?? 'Error al abrir caja', 'error'); }
+      });
     });
   }
 
   cerrarCaja() {
-    Swal.fire({
-      title: 'Cerrar caja',
-      text: '¿Desea cerrar la caja?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Cerrar caja',
-      cancelButtonText: 'Cancelar'
-    }).then(result => {
-      if (!result.isConfirmed) return;
-
+    const ref = this.dialog.open(DialogCerrarCaja, { disableClose: true });
+    ref.afterClosed().subscribe(confirmado => {
+      if (!confirmado) return;
       this.cajaService.cerrarCaja().subscribe({
-        next: () => {
+        next: cierre => {
+          const html = this.ticketService.generarHtmlCierre(cierre);
+          this.ticketService.imprimir(html);
           this.cajaAbierta = null;
-          Swal.fire('Caja cerrada', '', 'success');
         }
       });
     });
   }
 
-  crearVenta(dto: CrearVentaDTO) {
+  @HostListener('window:keydown', ['$event'])
+  handleShortcuts(event: KeyboardEvent) {
+    if (event.key.length === 1) return;
+
+    if (event.key === 'F2') { event.preventDefault(); this.pagarRapido(); }
+    if (event.key === 'F4') { event.preventDefault(); this.carrito.limpiar(); }
+    if (event.key === 'Escape') { event.preventDefault(); this.carrito.limpiar(); }
+  }
+
+  pagarRapido() {
+    if (!this.cajaAbierta) { Swal.fire('Caja cerrada', 'Debe abrir la caja', 'warning'); return; }
+    if (!this.carrito || this.carrito.carrito.length === 0) return;
+    this.carrito.confirmarVentaRapida();
+  }
+
+  retirarDinero() {
+    if (!this.cajaAbierta) { Swal.fire('Caja cerrada', 'Debe abrir la caja', 'warning'); return; }
+
+    const ref = this.dialog.open(DialogRetirarDinero, { disableClose: true });
+    ref.afterClosed().subscribe(resultado => {
+      if (!resultado) return;
+      this.cajaService.retirar(resultado.monto, resultado.motivo).subscribe({
+        next: () => { },
+        error: err => { Swal.fire('Error', err.error?.mensaje ?? 'Error al retirar', 'error'); }
+      });
+    });
+  }
+
+  crearVenta(pedido: PedidoVenta) {
     if (!this.cajaAbierta) {
       Swal.fire('Caja cerrada', 'Debe abrir la caja', 'warning');
       return;
     }
 
-    this.ventasService.crearVenta(dto).subscribe({
-      next: venta => {        
-        const html = this.generarHtmlTicket(venta);
-        this.imprimirTicket(html);
+    this.ventasService.crearVenta(pedido.dto).subscribe({
+      next: venta => {
+        Swal.fire({ icon: 'success', title: 'Venta registrada', timer: 1500, showConfirmButton: false });
 
-        Swal.fire('Venta registrada', '', 'success');
+        if (pedido.ticketFiscal && pedido.clienteId != null) {
+          this.facturaService.solicitar({ ventaId: venta.id, clienteId: pedido.clienteId }).subscribe({
+            next: async factura => {
+              const html = await this.ticketServiceArca.generarHtmlFactura(factura, venta);
+              this.ticketServiceArca.imprimir(html);
+            },
+            error: err => {
+              Swal.fire('Error ARCA', err.error?.mensaje ?? 'No se pudo emitir la factura electrónica', 'error');
+              if (pedido.imprimirTicket) {
+                const html = this.ticketService.generarHtmlVenta(venta);
+                this.ticketService.imprimir(html);
+              }
+            }
+          });
+        } else if (pedido.imprimirTicket) {
+          const html = this.ticketService.generarHtmlVenta(venta);
+          this.ticketService.imprimir(html);
+        }
       },
       error: err => {
-        Swal.fire(
-          'Error',
-          err.error?.mensaje ?? 'Error al crear venta',
-          'error'
-        );
+        Swal.fire('Error', err.error?.mensaje ?? 'Error al crear venta', 'error');
       }
     });
   }
-
-  private generarHtmlTicket(venta: any): string {
-    return `
-  <html>
-    <head>
-      <style>
-        body {
-          width: 280px;
-          font-family: monospace;
-          font-size: 12px;
-        }
-        .center {
-          text-align: center;
-        }
-        .logo {
-          max-width: 160px;
-          margin-bottom: 6px;
-        }
-        .line {
-          border-top: 1px dashed #000;
-          margin: 6px 0;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="center">        
-        <div><strong>LA NUEVA BODEGA</strong></div>
-        <div>Ticket interno</div>
-        <div>Venta Nº ${venta.numeroVenta}</div>
-      </div>
-
-      <div class="line"></div>
-
-      ${venta.detalles.map((d: any) => `
-        ${d.productoNombre}<br>
-        ${d.cantidad} x $${d.precioUnitario} = $${d.subtotal}<br>
-      `).join('')}
-
-      <div class="line"></div>
-
-      <strong>Total: $${venta.total}</strong><br>
-      Pago: ${venta.metodoDePago}<br>
-      ${new Date(venta.fechaHora).toLocaleString()}
-
-      <div class="center">
-        <br>Gracias por su compra
-      </div>
-    </body>
-  </html>
-  `;
-  }
-
-
-
-
-  private imprimirTicket(html: string) {
-    const win = window.open('', '_blank', 'width=300,height=600');
-    if (!win) return;
-
-    win.document.open();
-    win.document.write(html);
-    win.document.close();
-
-    win.focus();
-    win.print();
-    win.close();
-  }
-
 
 }

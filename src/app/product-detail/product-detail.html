@@ -6,10 +6,15 @@
   <p><strong>Precio:</strong> ${{ producto.precioVenta }}</p>
   <p><strong>Proveedor:</strong> {{ producto.proveedorNombre }}</p>
   <p><strong>Rubro:</strong> {{ producto.rubroNombre }}</p>
+  <p><strong>Stock:</strong> {{producto.existencia ?? 0}}</p>
 
   <div class="acciones">
     <button mat-raised-button color="primary" (click)="onEditar()">
       <mat-icon>edit</mat-icon> Editar
+    </button>
+
+    <button mat-raised-button color="accent" (click)="onAjustarStock()">
+      <mat-icon>inventory</mat-icon> Ajustar Stock
     </button>
 
     <button mat-raised-button color="warn" (click)="onEliminar()">

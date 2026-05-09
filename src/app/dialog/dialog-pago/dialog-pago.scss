@@ -1,49 +1,326 @@
 :host {
   display: block;
-  padding: 24px;
+  padding: 8px 24px 16px;
   min-width: 420px;
-  max-width: 600px;
+  max-width: 560px;
 }
 
-h2 {
-  margin: 0 0 20px;
-  font-size: 22px;
+/* ── Título ── */
+h2[mat-dialog-title] {
+  font-size: 20px;
   font-weight: 600;
+  text-align: center;
+  margin-bottom: 8px;
+  padding-bottom: 0;
+}
+
+/* ── Toggle pago mixto ── */
+.toggle-mix {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+
+  mat-slide-toggle {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+/* ── Botones de métodos (+Efectivo, +QR, +Tarjeta) ── */
+.metodos-grid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+
+  button {
+    min-width: 110px;
+    height: 38px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+    border: 1.5px solid #1a73e8;
+    color: #1a73e8;
+    background: transparent;
+
+    &:hover {
+      background: rgba(26, 115, 232, 0.06);
+    }
+  }
+}
+
+/* ── Separador ── */
+hr {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 12px 0 16px;
+}
+
+/* ── Lista de pagos (Efectivo, Tarjeta, QR) ── */
+.lista-pagos {
+  margin-bottom: 4px;
+}
+
+.pago-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+
+  span {
+    width: 90px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #212121;
+    flex-shrink: 0;
+  }
+
+  .monto-input {
+    flex: 1;
+    max-width: 160px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #bdbdbd;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.15);
+    }
+  }
+
+  button[mat-icon-button] {
+    color: #757575;
+    width: 36px;
+    height: 36px;
+
+    &:hover {
+      color: #d32f2f;
+    }
+  }
+}
+
+/* ── Resumen: Suma pagos / Restante ── */
+.resumen-totales {
+  text-align: right;
+  font-size: 14px;
+  color: #424242;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  line-height: 1.8;
+
+  p {
+    margin: 0;
+  }
+
+  strong {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  &.error {
+    color: #d32f2f;
+  }
+}
+
+/* ── Paso 2: resumen del pago confirmado ── */
+.resumen-pago-confirmado {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #e8f5e9;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2e7d32;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ── Paso 2: opciones de comprobante ── */
+.opciones-comprobante {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.opcion-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #1a73e8;
+    flex-shrink: 0;
+  }
+
+  &:has(input:checked) {
+    border-color: #1a73e8;
+    background: rgba(26, 115, 232, 0.04);
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.03);
+  }
+}
+
+.opcion-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.4;
+
+  strong {
+    font-size: 14px;
+    color: #212121;
+  }
+
+  small {
+    font-size: 12px;
+    color: #757575;
+    margin-top: 2px;
+  }
+}
+
+/* ── Paso 2: selector de cliente ── */
+.selector-cliente {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 16px;
+}
+
+.busqueda-cliente {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid #bdbdbd;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+
+  &:focus-within {
+    border-color: #1a73e8;
+  }
+
+  mat-icon {
+    color: #9e9e9e;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+}
+
+.input-busqueda {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+  color: #212121;
+
+  &::placeholder {
+    color: #9e9e9e;
+  }
+}
+
+.lista-clientes {
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.cliente-item {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #f5f5f5;
+  transition: background 0.15s;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: #f5f9ff; }
+}
+
+.cliente-nombre {
+  font-size: 14px;
+  font-weight: 600;
+  color: #212121;
+}
+
+.cliente-meta {
+  font-size: 11px;
+  color: #757575;
+  margin-top: 2px;
+}
+
+.cliente-seleccionado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #e3f2fd;
+  border-radius: 8px;
+  padding: 10px 12px;
+
+  mat-icon {
+    color: #1a73e8;
+  }
+
+  div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.4;
+
+    strong { font-size: 14px; color: #212121; }
+    small  { font-size: 11px; color: #546e7a; }
+  }
+}
+
+.cargando {
+  font-size: 13px;
+  color: #757575;
+  padding: 8px 0;
   text-align: center;
 }
 
-/* Métodos de pago */
-.metodos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-  margin-bottom: 24px;
+.sin-resultados {
+  font-size: 13px;
+  color: #9e9e9e;
+  padding: 14px;
+  text-align: center;
 }
 
-.metodos button {
-  min-width: 120px;
-  height: 48px;
-  font-weight: 600;
-  text-transform: uppercase;
-  border-radius: 12px;
-}
+/* ── Acciones del diálogo ── */
+mat-dialog-actions {
+  padding-top: 8px;
+  gap: 8px;
 
-/* Acciones */
-.acciones {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
+  button[mat-button] {
+    color: #1a73e8;
+    font-weight: 500;
+  }
 
-.acciones button {
-  min-width: 120px;
-}
-
-.metodos button.seleccionado {
-  background: #3f51b5;
-  color: #fff;
-  box-shadow: 0 6px 14px rgba(63, 81, 181, 0.35);
-  transform: scale(1.06);
+  button[mat-raised-button] {
+    font-weight: 600;
+    min-width: 140px;
+  }
 }

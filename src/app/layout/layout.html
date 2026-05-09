@@ -1,73 +1,79 @@
 <mat-sidenav-container class="app-sidenav-container">
 
-    <mat-sidenav #sidenav class="app-sidenav" mode="side" [opened]="isSidebarOpen()" (mouseenter)="toggleSidebar(true)"
-        (mouseleave)="toggleSidebar(false)">
+    <mat-sidenav #sidenav class="app-sidenav" mode="side" [opened]="isSidebarOpen()">
    
         <mat-nav-list>
 
             <a mat-list-item routerLink="/app/ventas" routerLinkActive="active">
-
-                <span>Mostrador 🧾</span>
+                <span>🛒 MOSTRADOR</span>
             </a>
 
             <a mat-list-item routerLink="/app/ventas/historial" routerLinkActive="active">
+                <span>📜 HISTORIAL</span>
+            </a>
 
-                <span>Historial 🧾</span>
+            <a mat-list-item routerLink="/app/historialcaja" routerLinkActive="active">
+                <span>💵 CAJA</span>                
             </a>
 
             <a mat-list-item routerLink="/app/productos" routerLinkActive="active">
-
-                <span>Productos 📦</span>
+                <span>📦 PRODUCTOS</span>
             </a>
 
             <a mat-list-item routerLink="/app/proveedores" routerLinkActive="active">
-
-                <span>Proveedores 🚚</span>
+                <span>🚛 PROVEEDORES</span>
             </a>
 
             <a mat-list-item routerLink="/app/rubros" routerLinkActive="active">
-
-                <span>Rubros 🗂️</span>
+                <span>🏷️ RUBROS</span>
             </a>
 
-            <a mat-list-item (click)="onLogout()" class="logout-link">
-
-                <span>Cerrar sesión 🔒</span>
+            <a mat-list-item routerLink="/app/clientes" routerLinkActive="active">
+                <span>👥 CLIENTES</span>
             </a>
 
+            <a mat-list-item routerLink="/app/condicioniva" routerLinkActive="active">
+                <span>🧾 CONDICIÓN IVA</span>
+            </a>
+            
             <div *ngIf="authService.isLoggedIn()" class="user-info">
-                <strong>{{ authService.userName }}</strong>
-                <div>📧 {{ authService.email }}</div>
-                <div>🖥️ Máquina: {{ authService.maquinaId }}</div>
-                <div *ngIf="authService.isAdmin">🎭 Administrador</div>
-                <div *ngIf="authService.isEmpleado">👷 Empleado</div>
-            </div>
+                <strong>👤 {{ authService.userName.toUpperCase() }}</strong>
 
+                <div>📧 {{ authService.email }}</div>
+
+                <div>🖥️ MÁQUINA: {{ authService.maquinaId }}</div>
+
+                <div *ngIf="authService.isAdmin">
+                    👑 ADMINISTRADOR
+                </div>
+
+                <div *ngIf="authService.isEmpleado">
+                    🛠️ EMPLEADO
+                </div>
+            </div>
+            
+            <a mat-list-item (click)="onLogout()" class="logout-link">
+                <span>🔒 CERRAR SESIÓN</span>
+            </a>
 
         </mat-nav-list>
-
 
     </mat-sidenav>
 
     <mat-sidenav-content class="main-content-area">
 
-        <mat-toolbar color="primary">
+        <mat-toolbar color="primary" class="app-toolbar">
+
             <button mat-icon-button (click)="toggleSidebar()">
                 <mat-icon>menu</mat-icon>
             </button>
+            
             <span class="spacer"></span>
-            <button mat-button></button>
+
         </mat-toolbar>
 
         <div class="router-content">
             <router-outlet></router-outlet>
-        </div>
-
-        <div class="header">
-
-            <button pButton type="button" label="Cerrar Sesión" icon="pi pi-sign-out" (click)="onLogout()"
-                class="p-button-danger p-button-text">
-            </button>
         </div>
 
     </mat-sidenav-content>

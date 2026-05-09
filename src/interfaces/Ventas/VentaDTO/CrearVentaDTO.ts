@@ -1,6 +1,12 @@
 import { CrearVentaDetalleDTO } from "./CrearVentaDetalleDTO";
 
 export interface CrearVentaDTO {
-  metodoDePagoId: number;
-  detalles: CrearVentaDetalleDTO[];
+  pagos: {
+    metodoPagoId: number;
+    monto: number;
+  }[];
+  detalles: {
+    productoId: number;
+    cantidad: number;
+  }[];
 }

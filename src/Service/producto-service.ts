@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ProductoDTO } from '../interfaces/ProductoDTO';
 import { CreacionProductoDTO } from '../interfaces/CreacionProductoDTO';
 import { EdicionProductoDTO } from '../interfaces/EdicionProductoDTO';
+import { BalanzaDecodificadaDTO } from '../interfaces/BalanzaDecodificadaDTO';
 import { environment } from '../environments/environment';
 import { PagedResult } from '../interfaces/PagedResult';
 
@@ -48,7 +49,17 @@ export class ProductoService {
     });
   }
 
+  decodificarBalanza(barcode: string): Observable<BalanzaDecodificadaDTO> {
+    return this.http.get<BalanzaDecodificadaDTO>(`${this.apiUrl}/balanza/${barcode}`);
+  }
 
+  obtenerGranel(): Observable<ProductoDTO[]> {
+    return this.http.get<ProductoDTO[]>(`${this.apiUrl}/granel`);
+  }
+
+  exportarPlu(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/exportar-plu`, { responseType: 'blob' });
+  }
 
 }
 

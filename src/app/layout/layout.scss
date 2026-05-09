@@ -1,0 +1,118 @@
+$sidenav-width: 260px;
+$sidenav-collapsed-width: 70px;
+$primary-color: #3f51b5; 
+$bg-light: #f5f5f5;
+$active-bg: rgba(63, 81, 181, 0.1);
+$logout-red: #d32f2f;
+
+.app-sidenav-container {
+  height: 100vh;
+  width: 100%;
+  // ❌ Sacá overflow-x: hidden, corta la animación del sidenav
+
+  .app-sidenav {
+    width: $sidenav-width;
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    // ❌ Sacá overflow: hidden del sidenav también
+    
+    mat-nav-list {
+      padding-top: 8px;
+      display: flex; 
+      flex-direction: column; 
+      height: 98%;
+      overflow-x: hidden;
+
+      a[mat-list-item] {
+        margin: 4px 8px;
+        border-radius: 8px;
+        height: 48px;
+        transition: all 0.2s ease;
+
+        span {
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.04);
+        }
+
+        &.active {
+          color: $primary-color;
+          background-color: $active-bg;
+
+          span {
+            font-weight: 600;
+          }
+        }
+      }
+
+      .logout-link {
+        color: $logout-red;
+        margin-top: 20px;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+      }
+    }
+
+    .user-info {
+      margin-top: auto;
+      padding: 16px;
+      background-color: #fafafa;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      font-size: 0.85rem;
+      color: #555;
+
+      strong {
+        display: block;
+        color: #333;
+        margin-bottom: 4px;
+        font-size: 0.95rem;
+      }
+
+      div {
+        margin-bottom: 2px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+    }
+  }
+
+  .main-content-area {
+    display: flex;
+    flex-direction: column;
+    background-color: $bg-light;
+    // ✅ Transición suave cuando el contenido se empuja
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    mat-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+
+      .spacer {
+        flex: 1 1 auto;
+      }
+    }
+
+    .router-content {
+      padding: 20px;
+      flex: 1;
+      overflow-y: auto;
+    }
+  }
+}
+
+.header {
+  padding: 10px;
+  display: flex;
+  justify-content: flex-end;
+}

@@ -1,0 +1,61 @@
+:host {
+  display: block;
+  min-width: 380px;
+  max-width: 440px;
+}
+
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 20px 24px 12px;
+  margin: 0;
+  border-bottom: 1px solid #e0e0e0;
+
+  .titulo-icon {
+    color: #1a73e8;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+mat-dialog-content {
+  padding: 20px 24px 8px !important;
+}
+
+.subtitulo {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: #616161;
+  line-height: 1.5;
+}
+
+.campo-monto {
+  width: 100%;
+}
+
+mat-dialog-actions {
+  padding: 8px 16px 16px !important;
+  gap: 8px;
+
+  button[mat-button] {
+    color: #616161;
+    font-weight: 500;
+  }
+
+  button[mat-raised-button] {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}

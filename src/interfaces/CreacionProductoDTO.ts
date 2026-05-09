@@ -5,4 +5,8 @@ export interface CreacionProductoDTO {
   precioVenta: number;
   idProveedor: number;
   idRubro: number;
+  esVendible: boolean;
+  esElaborado: boolean;
+  esAGranel: boolean;
+  codigoPLU?: number;
 }

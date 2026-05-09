@@ -11,6 +11,9 @@ import { AuthGuard } from '../Service/auth.guard';
 import { ProductosPage } from './productos-page/productos-page';
 import { Login } from './login/login';
 import { HistorialVentas } from './ventas/historial/historial-ventas/historial-ventas';
+import { CajaHistorial } from './caja-historial/caja-historial';
+import { Clientes } from './clientes/clientes';
+import { Condicioniva } from './condicioniva/condicioniva';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -29,10 +32,13 @@ export const routes: Routes = [
         ]
       },
       { path: 'dashboard', component: Dashboard },
+      { path: 'historialcaja', component: CajaHistorial },
       { path: 'proveedores', component: Proveedores },
       { path: 'rubros', component: Rubros },
       { path: 'facturas', component: Facturas },
-      { path: 'productos', component: ProductosPage }
+      { path: 'productos', component: ProductosPage },
+      { path: 'clientes', component: Clientes },
+      { path: 'condicioniva', component: Condicioniva }
     ]
   },
 

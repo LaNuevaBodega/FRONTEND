@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>{{ esEdicion ? 'Editar cliente' : 'Nuevo cliente' }}</h2>
+
+<mat-dialog-content [formGroup]="form" class="dialog-content">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Razón social</mat-label>
+    <input matInput formControlName="razonSocial" autocomplete="off">
+    <mat-error>Requerido</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>CUIT</mat-label>
+    <input matInput formControlName="cuit" placeholder="XX-XXXXXXXX-X" autocomplete="off">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Domicilio</mat-label>
+    <input matInput formControlName="domicilio" autocomplete="off">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" type="email" autocomplete="off">
+    <mat-error *ngIf="form.get('email')?.hasError('email')">Email inválido</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Condición de IVA</mat-label>
+    <mat-select formControlName="condicionIvaId">
+      <mat-option *ngFor="let c of condiciones" [value]="c.id">
+        {{ c.nombre }}
+        <span class="clase-badge clase-{{ c.claseComprobante.toLowerCase() }}">{{ c.claseComprobante }}</span>
+      </mat-option>
+    </mat-select>
+    <mat-error>Requerido</mat-error>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="form.invalid">
+    {{ esEdicion ? 'Guardar cambios' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

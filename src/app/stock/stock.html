@@ -2,24 +2,21 @@
   <input type="text" [formControl]="searchControl" placeholder="Buscar por nombre o código">
 </div>
 
-<input
-  #barcodeInput
-  type="text"
-  (keydown.enter)="onBarcodeScanned(barcodeInput.value)"
-  style="position: absolute; opacity: 0; height: 0; width: 0"
-/>
+<input #barcodeInput type="text" (keydown.enter)="onBarcodeScanned(barcodeInput.value)"
+  style="position: absolute; opacity: 0; height: 0; width: 0" />
 
-<div class="tabla-productos">
+<div class="tabla-productos" #tablaProductos>
   <table>
     <thead>
       <tr>
+        <th>Codigo</th>
         <th>Nombre</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let p of productosMostrados"
-          (click)="seleccionarProducto(p)"
-          [class.seleccionado]="productoSeleccionado?.id === p.id">
+      <tr *ngFor="let p of productosMostrados" (click)="seleccionarProducto(p)"
+        [class.seleccionado]="productoSeleccionado?.id === p.id">
+        <td>{{p.codigo}}</td>
         <td>{{ p.nombre }}</td>
       </tr>
     </tbody>

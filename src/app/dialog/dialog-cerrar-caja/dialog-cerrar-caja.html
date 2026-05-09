@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>
+  <mat-icon class="titulo-icon">lock</mat-icon>
+  Cerrar Caja
+</h2>
+
+<mat-dialog-content>
+  <p class="mensaje">
+    Se imprimirá el ticket de cierre y no se podrán registrar nuevas ventas hasta que se abra una nueva sesión de caja.
+  </p>
+  <p class="confirmacion">¿Confirma el cierre de caja?</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="warn" (click)="confirmar()">
+    <mat-icon>lock</mat-icon>
+    Cerrar caja
+  </button>
+</mat-dialog-actions>

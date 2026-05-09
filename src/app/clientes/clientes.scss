@@ -1,0 +1,87 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1;
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-container {
+  width: 0;
+  overflow: hidden;
+  transition: width 0.25s ease;
+
+  &.visible {
+    width: 260px;
+  }
+}
+
+.search-field {
+  width: 100%;
+}
+
+.tabla-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+
+  table {
+    width: 100%;
+  }
+}
+
+.acciones-cell {
+  white-space: nowrap;
+  width: 96px;
+}
+
+.clase-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+
+  &.clase-a {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+
+  &.clase-b {
+    background: #f3e5f5;
+    color: #6a1b9a;
+  }
+}
+
+.empty {
+  margin-top: 48px;
+  text-align: center;
+  color: #888;
+}
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}

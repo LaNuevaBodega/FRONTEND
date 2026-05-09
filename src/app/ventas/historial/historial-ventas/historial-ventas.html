@@ -1,53 +1,151 @@
-<h2>Historial de ventas</h2>
-<div class="filtros">
-    <label> Desde: <input type="date" [(ngModel)]="desde">
-    </label> <label> Hasta: <input type="date" [(ngModel)]="hasta"> </label>
-    <!-- SOLO ADMIN -->
-    <label *ngIf="esAdmin">
-        Usuario:
-        <select [(ngModel)]="usuarioSeleccionado">
-            <option value="">Todos</option>
-            <option *ngFor="let u of usuarios" [value]="u">
-                {{ u }}
-            </option>
-        </select>
-    </label>
+<div class="page">
 
-    <label *ngIf="esAdmin">
-        Máquina:
-        <select [(ngModel)]="maquinaSeleccionada">
-            <option value="">Todas</option>
-            <option *ngFor="let m of maquinas" [value]="m">
-                {{ m }}
-            </option>
-        </select>
-    </label>
+    <h2 class="page-title">Historial de ventas</h2>
 
-    <button (click)="buscar()">Buscar</button>
+    <div class="filtros">
+
+        <mat-form-field appearance="outline">
+            <mat-label>Desde</mat-label>
+            <input matInput [matDatepicker]="pickerDesde" [(ngModel)]="desde">
+            <mat-datepicker-toggle matSuffix [for]="pickerDesde"></mat-datepicker-toggle>
+            <mat-datepicker #pickerDesde></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Hasta</mat-label>
+            <input matInput [matDatepicker]="pickerHasta" [(ngModel)]="hasta">
+            <mat-datepicker-toggle matSuffix [for]="pickerHasta"></mat-datepicker-toggle>
+            <mat-datepicker #pickerHasta></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" *ngIf="esAdmin">
+            <mat-label>Usuario</mat-label>
+            <mat-select [(ngModel)]="usuarioSeleccionado">
+                <mat-option value="">Todos</mat-option>
+                <mat-option *ngFor="let u of usuarios" [value]="u">
+                    {{ u }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" *ngIf="esAdmin">
+            <mat-label>Máquina</mat-label>
+            <mat-select [(ngModel)]="maquinaSeleccionada">
+                <mat-option value="">Todas</mat-option>
+                <mat-option *ngFor="let m of maquinas" [value]="m">
+                    {{ m }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Método de pago</mat-label>
+            <mat-select [(ngModel)]="metodoPagoFiltro">
+                <mat-option [value]="">Todos</mat-option>
+                <mat-option *ngFor="let m of metodosDePago" [value]="m.nombre">
+                    {{ m.nombre }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="buscar()">
+            Buscar
+        </button>
+
+    </div>
+
+    <div class="tabla-wrapper">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z2" *ngIf="dataSource.data.length > 0">>
+
+            <!-- Numero -->
+            <ng-container matColumnDef="numeroVenta">
+                <th mat-header-cell *matHeaderCellDef>N°</th>
+                <td mat-cell *matCellDef="let v">
+                    {{ v.numeroVenta }}
+                </td>
+            </ng-container>
+
+            <!-- Fecha -->
+            <ng-container matColumnDef="fechaHora">
+                <th mat-header-cell *matHeaderCellDef>Fecha</th>
+                <td mat-cell *matCellDef="let v">
+                    {{ v.fechaHora | date:'short' }}
+                </td>
+            </ng-container>
+
+            <!-- Total -->
+            <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef>Total</th>
+                <td mat-cell *matCellDef="let v" class="total">
+                    {{ v.total | currency:'$' }}
+                </td>
+            </ng-container>
+
+            <!-- Metodo -->
+            <!-- Metodo -->
+            <ng-container matColumnDef="metodoDePago">
+                <th mat-header-cell *matHeaderCellDef>Método</th>
+                <td mat-cell *matCellDef="let v">
+                    <span>{{ v.metodoDePago }}</span>
+                    <div *ngIf="v.pagos && v.pagos.length > 1" class="pagos-detalle">
+                        <small *ngFor="let p of v.pagos">
+                            {{ p.metodoPago }}: {{ p.monto | currency:'$' }}
+                        </small>
+                    </div>
+                </td>
+            </ng-container>
+
+            <!-- Usuario -->
+            <ng-container matColumnDef="usuario">
+                <th mat-header-cell *matHeaderCellDef>Usuario</th>
+                <td mat-cell *matCellDef="let v">
+                    {{ v.usuario }}
+                </td>
+            </ng-container>
+
+            <!-- Máquina -->
+            <ng-container matColumnDef="maquinaId">
+                <th mat-header-cell *matHeaderCellDef>Máquina</th>
+                <td mat-cell *matCellDef="let v">
+                    {{ v.maquinaId }}
+                </td>
+            </ng-container>
+
+            <!-- Acción -->
+            <ng-container matColumnDef="accion">
+                <th mat-header-cell *matHeaderCellDef>Acción</th>
+                <td mat-cell *matCellDef="let v">
+                    <button mat-stroked-button color="primary" (click)="reimprimir(v.id)">
+                        Reimprimir
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+
+        </table>
+    </div>
+
+
+    <mat-paginator *ngIf="dataSource.data.length > 0" [pageSizeOptions]="[10, 25, 50]" pageSize="50"
+        showFirstLastButtons>
+    </mat-paginator>
+
+    <div *ngIf="dataSource.data.length > 0" class="resumen-metodos">
+        <h3>Resumen por método de pago</h3>
+        <div *ngFor="let item of totalesPorMetodo" class="resumen-fila">
+            <span>{{ item.metodo }}</span>
+            <span>{{ item.total | currency:'$' }}</span>
+        </div>
+        <div class="resumen-fila resumen-total">
+            <span>Total del período</span>
+            <span>{{ totalDia | currency:'$' }}</span>
+        </div>
+    </div>
+
+    <div *ngIf="dataSource.data.length === 0 && !cargando" class="empty">
+        No hay ventas
+    </div>
+
 </div>
-<div *ngIf="ventas.length > 0">
-    <table>
-        <thead>
-            <tr>
-                <th>N°</th>
-                <th>Fecha</th>
-                <th>Total</th>
-                <th>Método</th>
-                <th>Usuario</th>
-                <th>Máquina</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let v of ventas">
-                <td>{{ v.numeroVenta }}</td>
-                <td>{{ v.fechaHora | date:'short' }}</td>
-                <td>${{ v.total }}</td>
-                <td>{{ v.metodoDePago }}</td>
-                <td>{{ v.usuario }}</td>
-                <td>{{ v.maquinaId }}</td>
-            </tr>
-        </tbody>
-    </table>
-    <h3>Total del período: ${{ totalDia }}</h3>
-</div>
-<div *ngIf="ventas.length === 0 && !cargando"> <em>No hay ventas</em> </div>

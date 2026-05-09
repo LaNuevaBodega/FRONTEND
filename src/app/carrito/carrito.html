@@ -1,5 +1,5 @@
 <div class="carrito-container">
-  <h3>Carrito</h3>
+  <!-- <h3>Carrito</h3> -->
 
   <div class="tabla-carrito-wrapper">
     <table *ngIf="carrito.length > 0">
@@ -18,13 +18,15 @@
         <tr *ngFor="let item of carrito">
           <td>{{item.producto.nombre}}</td>
           <td>{{item.producto.codigo}}</td>
-          <td>${{item.producto.precioVenta}}</td>
+          <td>${{ item.producto.precioVenta | number:'1.2-2' }}</td>
           <td>
             <button (click)="disminuirCantidad(item)">-</button>
             {{item.cantidad}}
             <button (click)="aumentarCantidad(item)">+</button>
           </td>
-          <td>${{item.producto.precioVenta * item.cantidad}}</td>
+          <td>
+            ${{ (item.producto.precioVenta * item.cantidad) | number:'1.2-2' }}
+          </td>
           <td>
             <button (click)="eliminarProducto(item)">X</button>
           </td>
@@ -38,7 +40,8 @@
   </div>
 
   <div class="total-pagar">
-    <strong>Total: ${{total}}</strong>
-    <button  class="btn-pagar" (click)="abrirDialogoPago()">Pagar</button>
+    <strong>Total: ${{ total | number:'1.2-2' }}</strong>
+    <button class="btn-pagar" (click)="abrirDialogoPago()">Pagar</button>
   </div>
+
 </div>

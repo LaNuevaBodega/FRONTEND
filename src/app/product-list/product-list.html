@@ -6,8 +6,12 @@
       <input type="text" [formControl]="searchControl" placeholder="Buscar..." />
     </div>
 
-    <button mat-raised-button color="primary" (click)="agregar.emit()">
+    <button mat-flat-button color="primary" (click)="agregar.emit()">
       <mat-icon>add</mat-icon> Agregar
+    </button>
+
+    <button mat-flat-button color="primary" (click)="exportarBalanza.emit()" title="Descarga CSV con PLU para cargar en la balanza Systel">
+      <mat-icon>download</mat-icon> Exportar PLU Balanza
     </button>
 
   </div>
@@ -17,17 +21,34 @@
     <table>
       <thead>
         <tr>
-          <th>Nombre / Código</th>
+          <th>Código / Nombre</th>
         </tr>
       </thead>
 
       <tbody>
-        <tr *ngFor="let p of productosFiltrados" (click)="seleccionar(p)">
+
+        <tr class="grupo-header">
+          <td> PRODUCTOS ELABORADOS</td>
+        </tr>
+
+        <tr *ngFor="let p of productosElaborados" (click)="seleccionar(p)">
           <td>
-            <span class="nombre">{{ p.nombre }}</span>
             <span class="codigo">({{ p.codigo }})</span>
+            <span class="nombre">{{ p.nombre }}</span>
           </td>
         </tr>
+
+        <tr class="grupo-header">
+          <td> PRODUCTOS DE STOCK</td>
+        </tr>
+
+        <tr *ngFor="let p of productosStock" (click)="seleccionar(p)">
+          <td>
+            <span class="codigo">({{ p.codigo }})</span>
+            <span class="nombre">{{ p.nombre }}</span>
+          </td>
+        </tr>
+
       </tbody>
 
     </table>

@@ -1,0 +1,63 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 24px;
+}
+
+.tabla-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+
+  table {
+    width: 100%;
+  }
+}
+
+.page-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.filtros {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 20px;
+
+  button {
+    margin-bottom: 22px; // compensa la altura del label flotante
+  }
+}
+
+table {
+  width: 100%;
+}
+
+.ingreso {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.egreso {
+  color: #c62828;
+  font-weight: 600;
+}
+
+.saldo {
+  font-weight: 600;
+}
+
+.empty {
+  margin-top: 40px;
+  text-align: center;
+  color: #777;
+}
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}

@@ -93,8 +93,7 @@ export class Productos implements OnInit {
       }
     });
   }
-
-  // Scroll real dentro del div de productos
+  
   onScrollDiv() {
     const div = this.scrollContenedor.nativeElement;
 

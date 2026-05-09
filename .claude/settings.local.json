@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__plugin_claude-mem_mcp-search__smart_outline",
+      "mcp__plugin_claude-mem_mcp-search__get_observations",
+      "Read(//d/LANUEVABODEGA/bodegaback/Servicios/**)",
+      "Read(//d/LANUEVABODEGA/bodegaback/Contexto/**)",
+      "Read(//d/LANUEVABODEGA/bodegaback/**)",
+      "Bash(dotnet build *)",
+      "Bash(dotnet ef *)",
+      "Bash(xargs grep *)",
+      "Bash(npx tsc *)",
+      "Bash(Get-Content \"d:\\\\LANUEVABODEGA\\\\distribuidora\\\\src\\\\app\\\\dialog\\\\dialog-producto\\\\dialog-producto.ts\")",
+      "Bash(npx ng *)"
+    ],
+    "additionalDirectories": [
+      "d:\\LANUEVABODEGA\\bodegaback\\Controllers",
+      "d:\\LANUEVABODEGA\\bodegaback\\Modelos\\DTO\\CajaDTO",
+      "d:\\LANUEVABODEGA\\bodegaback\\Servicios"
+    ]
+  }
+}

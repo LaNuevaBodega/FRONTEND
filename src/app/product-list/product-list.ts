@@ -1,14 +1,12 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, Subscription } from 'rxjs';
-
 import { ProductoDTO } from '../../interfaces/ProductoDTO';
-import { PagedResult } from '../../interfaces/PagedResult';
 import { ProductoService } from '../../Service/producto-service';
 
-import { RealtimeChange, SignalRService } from '../../Service/SignalRService';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { MatAnchor, MatButtonModule } from "@angular/material/button";
 
 
 @Component({
@@ -17,16 +15,19 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     ReactiveFormsModule,
     CommonModule,
-    MatIconModule
-  ],
+    MatIconModule,
+    MatAnchor,
+    MatButtonModule
+],
   templateUrl: './product-list.html',
   styleUrl: './product-list.scss'
 })
 export class ProductList implements OnInit, OnDestroy {
 
-
+  @Input() triggerRefrescar: number = 0;
   @Output() productoSeleccionado = new EventEmitter<ProductoDTO | null>();
   @Output() agregar = new EventEmitter<void>();
+  @Output() exportarBalanza = new EventEmitter<void>();
 
 
   productos: ProductoDTO[] = [];
@@ -38,42 +39,40 @@ export class ProductList implements OnInit, OnDestroy {
   noHayMas = false;
   termino = '';
 
+  private iniciado = false;
+
   searchControl = new FormControl('');
 
   private subs: Subscription[] = [];
 
   constructor(
     private service: ProductoService,
-    private signalR: SignalRService,
-    
-  ) {}
+
+  ) { }
 
   ngOnInit(): void {
+
+    this.iniciado = true;
     this.cargarPagina();
 
     const subFiltro = this.searchControl.valueChanges
       .pipe(debounceTime(400))
       .subscribe(valor => {
         this.termino = valor ?? '';
-        this.buscarEnBackend();
+        this.refrescarBusqueda();
       });
 
     this.subs.push(subFiltro);
 
-    const subSignalR = this.signalR
-      .cambiosDeEntidad('producto')
-      .subscribe((cambio: RealtimeChange<any>) => {
+  }
 
-        if (cambio.accion === 'creado') {
-          this.onProductoCreado(cambio.payload);
-        } else if (cambio.accion === 'actualizado') {
-          this.onProductoActualizado(cambio.payload);
-        } else if (cambio.accion === 'eliminado') {
-          this.onProductoEliminado(cambio.payload.id);
-        }
-      });
-
-    this.subs.push(subSignalR);
+  ngOnChanges() {
+    if (!this.iniciado) 
+      return;
+    this.pagina = 1;
+    this.noHayMas = false;
+    this.productos = [];
+    this.cargarPagina();
   }
 
   ngOnDestroy(): void {
@@ -108,7 +107,7 @@ export class ProductList implements OnInit, OnDestroy {
       });
   }
 
-  buscarEnBackend(): void {
+  private refrescarBusqueda(): void {
     this.pagina = 1;
     this.noHayMas = false;
     this.productos = [];
@@ -130,24 +129,21 @@ export class ProductList implements OnInit, OnDestroy {
     this.productoSeleccionado.emit(p);
   }
 
-  private onProductoCreado(prod: ProductoDTO): void {
-    this.productos.unshift(prod);
-    this.productosFiltrados = [...this.productos];
+  refrescarDesdePadre(): void {
+    this.pagina = 1;
+    this.noHayMas = false;
+    this.productos = [];
+    this.cargarPagina();
   }
 
-  private onProductoActualizado(prod: ProductoDTO): void {
-    const index = this.productos.findIndex(p => p.id === prod.id);
-    if (index !== -1) {
-      this.productos[index] = { ...this.productos[index], ...prod };
-    }
-    this.productosFiltrados = [...this.productos];
+  get productosElaborados(): ProductoDTO[] {
+    return this.productos.filter(p => p.esElaborado);
   }
 
-  private onProductoEliminado(id: number): void {
-    this.productos = this.productos.filter(p => p.id !== id);
-    this.productosFiltrados = [...this.productos];
-    this.productoSeleccionado.emit(null);
+  get productosStock(): ProductoDTO[] {
+    return this.productos.filter(p => !p.esElaborado);
   }
+
 }
 
 

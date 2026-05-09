@@ -1,25 +1,28 @@
 <div class="ventas-workspace">
 
   <div class="caja-bar">
-    <mat-slide-toggle
-      [checked]="!!cajaAbierta"
-      [disabled]="cargandoCaja"
-      (change)="onToggleCaja($event)">
-      Caja {{ cajaAbierta ? 'Abierta' : 'Cerrada' }}
-    </mat-slide-toggle>
-  </div>  
-
-  <div class="productos-panel">
-    <app-stock
-      (productoSeleccionadoParaCarrito)="carrito.agregarProducto($event)">
-    </app-stock>
+    <div class="caja-bar-left">
+      <mat-slide-toggle [checked]="!!cajaAbierta" [disabled]="cargandoCaja" (change)="onToggleCaja($event)">
+        Caja {{ cajaAbierta ? 'Abierta' : 'Cerrada' }}
+      </mat-slide-toggle>
+    </div>
+    <div class="caja-bar-right">
+      <button class="btn-retiro" [disabled]="!cajaAbierta" (click)="retirarDinero()" title="Retirar dinero (F7)">
+        Retiro <kbd>F7</kbd>
+      </button>
+    </div>
   </div>
 
-  <div class="carrito-panel">
-    <app-carrito
-      #carrito
-      (confirmarVenta)="crearVenta($event)">
-    </app-carrito>
+  <div class="paneles">
+    <div class="productos-panel">
+      <app-stock (productoSeleccionadoParaCarrito)="carrito.agregarProducto($event)">
+      </app-stock>
+    </div>
+
+    <div class="carrito-panel">
+      <app-carrito #carrito (confirmarVenta)="crearVenta($event)">
+      </app-carrito>
+    </div>
   </div>
 
 </div>

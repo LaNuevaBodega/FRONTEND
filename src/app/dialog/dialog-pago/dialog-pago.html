@@ -1,24 +1,139 @@
-<h2>Método de pago</h2>
+﻿<h2 mat-dialog-title>
+  <span *ngIf="paso === 1">Finalizar Venta — {{ data.total | currency }}</span>
+  <span *ngIf="paso === 2">Opciones de comprobante</span>
+</h2>
 
-<div class="metodos">
-  <button
-    mat-raised-button
-    *ngFor="let m of metodos; let i = index"
-    (click)="seleccionarPago(m.id)"
-    [class.seleccionado]="metodoSeleccionadoId === m.id">
+<mat-dialog-content>
 
-    {{ m.nombre }} ({{ i + 1 }})
-  </button>
-</div>
+  <!-- ══ PASO 1: Selección de pago ══ -->
+  <ng-container *ngIf="paso === 1">
 
-<div class="acciones">
-  <button mat-button (click)="onCancel()">Cancelar</button>
+    <div class="toggle-mix">
+      <mat-slide-toggle [(ngModel)]="modoMix" (change)="activarMix()">
+        Pago mixto
+      </mat-slide-toggle>
+    </div>
 
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="onConfirm()"
-    [disabled]="!metodoSeleccionadoId">
-    Confirmar
-  </button>
-</div>
+    <!-- Modo simple: un botón por método -->
+    <div *ngIf="!modoMix" class="metodos-grid">
+      <button mat-raised-button color="primary" *ngFor="let m of metodos" (click)="pagoRapido(m)">
+        {{ m.nombre }}
+      </button>
+    </div>
+
+    <!-- Modo mix: ingresar montos -->
+    <div *ngIf="modoMix">
+      <div class="metodos-grid">
+        <button mat-stroked-button *ngFor="let m of metodos" (click)="agregarPago(m)">
+          + {{ m.nombre }}
+        </button>
+      </div>
+
+      <hr>
+
+      <div class="lista-pagos" *ngFor="let p of pagosSeleccionados; let i = index">
+        <div class="pago-item">
+          <span>{{ p.nombreMetodo }}</span>
+          <input type="number" [(ngModel)]="p.monto" (ngModelChange)="validarTotales()" class="monto-input">
+          <button mat-icon-button color="warn" (click)="quitarPago(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="resumen-totales" [class.error]="restante !== 0">
+        <p>Suma pagos: {{ sumaPagos | currency }}</p>
+        <p><strong>Restante: {{ restante | currency }}</strong></p>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <!-- ══ PASO 2: Opciones de comprobante ══ -->
+  <ng-container *ngIf="paso === 2">
+
+    <div class="resumen-pago-confirmado">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ resumenPagos }} — {{ data.total | currency }}</span>
+    </div>
+
+    <div class="opciones-comprobante">
+
+      <label class="opcion-row">
+        <input type="checkbox" [(ngModel)]="imprimirTicket">
+        <div class="opcion-info">
+          <strong>Imprimir ticket</strong>
+          <small>Ticket de caja en impresora térmica</small>
+        </div>
+      </label>
+
+      <label class="opcion-row">
+        <input type="checkbox" [(ngModel)]="ticketFiscal" (change)="onToggleFiscal()">
+        <div class="opcion-info">
+          <strong>Factura electrónica (ARCA)</strong>
+          <small>Comprobante fiscal via AFIP</small>
+        </div>
+      </label>
+
+    </div>
+
+    <!-- Selector de cliente para factura fiscal -->
+    <div *ngIf="ticketFiscal" class="selector-cliente">
+      <div class="busqueda-cliente">
+        <mat-icon>search</mat-icon>
+        <input
+          type="text"
+          [(ngModel)]="filtroBusqueda"
+          placeholder="Buscar cliente por nombre o CUIT..."
+          class="input-busqueda"
+          (ngModelChange)="clienteSeleccionado = null">
+      </div>
+
+      <div *ngIf="cargandoClientes" class="cargando">Cargando clientes…</div>
+
+      <div *ngIf="!cargandoClientes && !clienteSeleccionado && clientes.length > 0" class="lista-clientes">
+        <div
+          *ngFor="let c of clientesFiltrados"
+          class="cliente-item"
+          (click)="seleccionarCliente(c)">
+          <span class="cliente-nombre">{{ c.razonSocial }}</span>
+          <span class="cliente-meta">{{ c.condicionIvaNombre }} · {{ c.cuit ?? 'Sin CUIT' }}</span>
+        </div>
+        <div *ngIf="clientesFiltrados.length === 0" class="sin-resultados">Sin resultados</div>
+      </div>
+
+      <div *ngIf="clienteSeleccionado" class="cliente-seleccionado">
+        <mat-icon>person</mat-icon>
+        <div>
+          <strong>{{ clienteSeleccionado.razonSocial }}</strong>
+          <small>{{ clienteSeleccionado.condicionIvaNombre }} · {{ clienteSeleccionado.cuit ?? 'Sin CUIT' }}</small>
+        </div>
+        <button mat-icon-button (click)="clienteSeleccionado = null; filtroBusqueda = ''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+  </ng-container>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <ng-container *ngIf="paso === 1">
+    <button mat-button (click)="onCancel()">Cancelar</button>
+    <button mat-raised-button color="primary" *ngIf="modoMix" (click)="onConfirm()"
+      [disabled]="restante !== 0 || pagosSeleccionados.length === 0">
+      Confirmar Pago
+    </button>
+  </ng-container>
+
+  <ng-container *ngIf="paso === 2">
+    <button mat-button (click)="volverPaso1()">
+      <mat-icon>arrow_back</mat-icon> Volver
+    </button>
+    <button mat-raised-button color="primary" (click)="confirmarFinal()">
+      Confirmar
+    </button>
+  </ng-container>
+</mat-dialog-actions>
+

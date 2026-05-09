@@ -1,11 +1,16 @@
 <div class="productos-layout">
-  
-  <app-product-list 
+    
+  <app-product-list
+  [triggerRefrescar]="triggerRefrescar"
   (productoSeleccionado)="onProductoSeleccionado($event)"
-  (agregar)="onAgregar()">
+  (agregar)="onAgregar()"
+  (exportarBalanza)="onExportarBalanza()">
   </app-product-list>
   
-  <app-product-detail [producto]="productoSeleccionado" (editar)="onEditar($event)" (eliminar)="onEliminar($event)">
+  <app-product-detail [producto]="productoSeleccionado" 
+  (editar)="onEditar($event)" 
+  (eliminar)="onEliminar($event)"
+  (ajustarStock)="abrirAjuste($event)">
   </app-product-detail>
 
 </div>

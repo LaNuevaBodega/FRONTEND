@@ -21,6 +21,7 @@ export class ProductDetail {
 
   @Output() editar = new EventEmitter<ProductoDTO>();
   @Output() eliminar = new EventEmitter<ProductoDTO>();
+  @Output() ajustarStock = new EventEmitter<ProductoDTO>();
 
   onEditar() {
     if (this.producto) {
@@ -31,6 +32,12 @@ export class ProductDetail {
   onEliminar() {
     if (this.producto) {
       this.eliminar.emit(this.producto);
+    }
+  }
+  
+  onAjustarStock() {
+    if (this.producto) {
+      this.ajustarStock.emit(this.producto);
     }
   }
 

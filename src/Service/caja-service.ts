@@ -13,6 +13,8 @@ export class CajaService {
 
   private apiUrl = `${environment.apiUrl}/Caja`;
 
+  cajaActual: CajaDTO | null = null;
+
   constructor(private http: HttpClient) { }
 
   obtenerCajaAbierta(): Observable<CajaDTO> {
@@ -31,6 +33,37 @@ export class CajaService {
 
   obtenerMaquinas(): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/maquinas`);
+  }
+
+  retirar(monto: number, motivo: string) {
+    return this.http.post(`${this.apiUrl}/retiro`, { monto, motivo });
+  }
+
+  obtenerHistorial(cajaId: number, desde: string, hasta: string) {
+    return this.http.get<any[]>(
+      `${this.apiUrl}/historial/${cajaId}?desde=${desde}&hasta=${hasta}`
+    );
+  }
+
+  obtenerHistorialPorMaquina(desde: string, hasta: string): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.apiUrl}/historial-maquina?desde=${desde}&hasta=${hasta}`
+    );
+  }
+
+  obtenerHistorialAdmin(maquinaId: string | null, desde: string, hasta: string): Observable<any[]> {
+    const params = maquinaId
+      ? `maquinaId=${encodeURIComponent(maquinaId)}&desde=${desde}&hasta=${hasta}`
+      : `desde=${desde}&hasta=${hasta}`;
+    return this.http.get<any[]>(`${this.apiUrl}/historial-admin?${params}`);
+  }
+
+  obtenerUltimoCierre(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/ultimo-cierre`);
+  }
+
+  obtenerTicketCierre(cajaId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/ticket-cierre/${cajaId}`);
   }
 
 

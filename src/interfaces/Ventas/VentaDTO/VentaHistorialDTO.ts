@@ -1,11 +1,12 @@
-export interface VentaHistorialDTO {
-  id: number;
-  numeroVenta: number;
-  fechaHora: string;   // ISO string (DateTime del backend)
+import { VentaPagoResumenDTO } from "./VentaPagoResumenDTO";
 
+export interface VentaHistorialDTO {
+   id: number;
+  numeroVenta: number;
+  fechaHora: string;
   total: number;
   metodoDePago: string;
-
-  usuario: string;    // username del cajero
+  usuario: string;
   maquinaId: string;
+  pagos: VentaPagoResumenDTO[];
 }

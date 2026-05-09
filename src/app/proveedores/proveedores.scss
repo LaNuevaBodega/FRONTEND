@@ -1,70 +1,50 @@
-/* Estilos para el componente principal de administración de proveedores */
-
-.proveedores-container {
-    padding: 24px;
-    background-color: #f5f5f5;
-    min-height: calc(100vh - 64px); /* Asume un navbar de 64px */
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px;
+  box-sizing: border-box;
 }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 0 5px;
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 
-    h2 {
-        margin: 0;
-        font-size: 1.8rem;
-        color: #3f51b5; /* Color primario de Material */
-    }
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 500;
+  }
 }
 
-.proveedores-card {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
+.header-actions {
+  display: flex;
+  gap: 8px;
 }
 
-/* --- Mat-Table Styling --- */
+.tabla-wrapper {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
 
-.full-width-table {
+  table {
     width: 100%;
-    
-    th.mat-header-cell {
-        font-weight: 600;
-        color: rgba(0, 0, 0, 0.65);
-        background-color: #e8eaf6; /* Fondo suave para la cabecera */
-        padding: 16px 8px;
-    }
-    
-    td.mat-cell {
-        padding: 12px 8px;
-    }
-    
-    .mat-row {
-        transition: background-color 0.2s ease;
-        &:hover {
-            background-color: #f0f0f0;
-        }
-    }
+  }
 }
 
-/* Anchos específicos para las columnas */
 .mat-column-id {
-    width: 60px;
-    text-align: center;
+  width: 80px;
 }
-.mat-column-nombre {
-    flex-grow: 1;
-}
-.mat-column-cuit {
-    width: 180px;
-}
+
 .mat-column-acciones {
-    width: 120px;
-    text-align: center;
-    button {
-        margin: 0 4px;
-    }
+  width: 140px;
+  text-align: center;
+}
+
+.empty {
+  margin-top: 48px;
+  text-align: center;
+  color: #888;
 }
