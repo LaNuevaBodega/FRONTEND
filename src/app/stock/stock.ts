@@ -11,7 +11,7 @@ import { ProductoDTO } from '../../interfaces/ProductoDTO';
 import { ProductoService } from '../../Service/producto-service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import Swal from 'sweetalert2';
+import { NotificationService } from '../../Service/notification-service';
 
 @Component({
   selector: 'app-stock',
@@ -37,7 +37,7 @@ export class Stock implements AfterViewInit {
 
   private focusTimeout: any = null;
 
-  constructor(private productoService: ProductoService) { }
+  constructor(private productoService: ProductoService, private notif: NotificationService) { }
 
   ngOnInit() {
     this.productoService.obtenerTodos().subscribe(result => {
@@ -76,35 +76,12 @@ export class Stock implements AfterViewInit {
     this.solicitarFocus("scroll");
   }
 
-  private toastBase(config: any) {
-    return Swal.fire({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      backdrop: false,
-      ...config,
-      didOpen: toast => {
-        toast.setAttribute('tabindex', '-1');
-      }
-    });
-  }
-
   private toastOk(producto: ProductoDTO) {
-    this.toastBase({
-      icon: 'success',
-      title: producto.nombre,
-      text: 'Agregado al carrito',
-      timer: 1200
-    });
+    this.notif.success(`${producto.nombre} — Agregado al carrito`, 1500);
   }
 
   private toastError(code: string) {
-    this.toastBase({
-      icon: 'error',
-      title: 'No encontrado',
-      text: `Código ${code}`,
-      timer: 1500
-    });
+    this.notif.error(`No encontrado — Código ${code}`, 2000);
   }
 
   onBarcodeScanned(code: string) {

@@ -6,6 +6,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../Service/auth-service';
 import { CajaService } from '../../Service/caja-service';
 import { TicketService } from '../../Service/ticket-service';
@@ -13,7 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogAbrirCaja } from '../dialog/dialog-abrir-caja/dialog-abrir-caja';
 import { DialogCerrarCaja } from '../dialog/dialog-cerrar-caja/dialog-cerrar-caja';
 import { DialogRetirarDinero } from '../dialog/dialog-retirar-dinero/dialog-retirar-dinero';
-import Swal from 'sweetalert2';
+import { NotificationService } from '../../Service/notification-service';
 
 @Component({
   selector: 'app-main-layout',
@@ -28,6 +29,7 @@ import Swal from 'sweetalert2';
     MatIconModule,
     MatButtonModule,
     MatToolbarModule,
+    MatTooltipModule,
   ],
   templateUrl: './layout.html',
   styleUrls: ['./layout.scss']
@@ -40,6 +42,7 @@ export class Layout {
     private cajaService: CajaService,
     private ticketService: TicketService,
     private dialog: MatDialog,
+    private notif: NotificationService,
   ) { }
 
   get cajaAbierta() { return this.cajaService.cajaActual; }
@@ -57,7 +60,7 @@ export class Layout {
       if (monto === null || monto === undefined) return;
       this.cajaService.abrirCaja(Number(monto)).subscribe({
         next: caja => { this.cajaService.cajaActual = caja; },
-        error: err => { Swal.fire('Error', err.error?.mensaje ?? 'Error al abrir caja', 'error'); }
+        error: err => { this.notif.error(err.error?.mensaje ?? 'Error al abrir caja'); }
       });
     });
   }
@@ -77,13 +80,13 @@ export class Layout {
   }
 
   retirarDinero() {
-    if (!this.cajaAbierta) { Swal.fire('Caja cerrada', 'Debe abrir la caja', 'warning'); return; }
+    if (!this.cajaAbierta) { this.notif.warning('Caja cerrada — Debe abrir la caja'); return; }
     const ref = this.dialog.open(DialogRetirarDinero, { disableClose: true });
     ref.afterClosed().subscribe(resultado => {
       if (!resultado) return;
       this.cajaService.retirar(resultado.monto, resultado.motivo).subscribe({
         next: () => { },
-        error: err => { Swal.fire('Error', err.error?.mensaje ?? 'Error al retirar', 'error'); }
+        error: err => { this.notif.error(err.error?.mensaje ?? 'Error al retirar'); }
       });
     });
   }
@@ -96,21 +99,13 @@ export class Layout {
       error: err => {
 
         if (err.status === 401) {
-          Swal.fire(
-            'Sesión inválida',
-            'Tu sesión expiró, iniciá sesión nuevamente',
-            'info'
-          );
+          this.notif.info('Sesión inválida — Tu sesión expiró, iniciá sesión nuevamente');
           this.authService.forceLogout();
           this.router.navigate(['/login']);
           return;
         }
 
-        Swal.fire(
-          'Caja abierta',
-          err.error ?? 'Debe cerrar la caja antes de cerrar sesión',
-          'warning'
-        );
+        this.notif.warning('Caja abierta — ' + (err.error ?? 'Debe cerrar la caja antes de cerrar sesión'));
       }
     });
   }

@@ -1,0 +1,213 @@
+<div class="reportes">
+
+  <!-- Encabezado: rango + KPIs -->
+  <header class="rep-header">
+    <div class="rep-title">
+      <mat-icon>insights</mat-icon>
+      <div>
+        <h1>Reportes</h1>
+        <span class="rep-sub">Resumen de ventas, productos y métodos de pago</span>
+      </div>
+    </div>
+
+    <div class="rep-rango">
+      <mat-form-field appearance="outline" class="rep-fecha">
+        <mat-label>Desde</mat-label>
+        <input matInput [matDatepicker]="pDesde" [(ngModel)]="fechaDesde" (dateChange)="cargar()">
+        <mat-datepicker-toggle matSuffix [for]="pDesde"></mat-datepicker-toggle>
+        <mat-datepicker #pDesde></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="rep-fecha">
+        <mat-label>Hasta</mat-label>
+        <input matInput [matDatepicker]="pHasta" [(ngModel)]="fechaHasta" (dateChange)="cargar()">
+        <mat-datepicker-toggle matSuffix [for]="pHasta"></mat-datepicker-toggle>
+        <mat-datepicker #pHasta></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="rep-kpis">
+      <div class="kpi">
+        <span class="kpi__label">Total vendido</span>
+        <span class="kpi__value">{{ money(totalDia) }}</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi__label">Ventas</span>
+        <span class="kpi__value">{{ cantidadVentas }}</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi__label">Ticket promedio</span>
+        <span class="kpi__value">{{ money(ticketPromedio) }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Fila 1: métodos de pago + productos más vendidos -->
+  <section class="rep-panels">
+
+    <!-- Torta + métodos -->
+    <div class="panel panel--metodos">
+      <div class="panel__head">
+        <h2>Métodos de pago</h2>
+        <span class="panel__hint" *ngIf="metodoMasUtilizado">
+          <mat-icon>star</mat-icon> {{ metodoMasUtilizado }}
+        </span>
+      </div>
+
+      <div class="metodos-body">
+        <!-- Torta (donut) -->
+        <div class="torta">
+          <svg viewBox="0 0 200 200" *ngIf="metodos.length; else sinTorta">
+            <g transform="rotate(-90 100 100)">
+              <circle cx="100" cy="100" [attr.r]="radio"
+                      fill="none" stroke="var(--lnb-border-soft)" stroke-width="28"></circle>
+              <circle *ngFor="let m of metodos"
+                      cx="100" cy="100" [attr.r]="radio"
+                      fill="none" [attr.stroke]="m.color" stroke-width="28"
+                      [attr.stroke-dasharray]="m.dash + ' ' + (circunferencia - m.dash)"
+                      [attr.stroke-dashoffset]="m.offset"></circle>
+            </g>
+            <text x="100" y="94" text-anchor="middle" class="torta__total">{{ money(totalDia) }}</text>
+            <text x="100" y="114" text-anchor="middle" class="torta__caption">total</text>
+          </svg>
+          <ng-template #sinTorta>
+            <div class="vacio vacio--torta">
+              <mat-icon>pie_chart</mat-icon>
+              <span>Sin datos</span>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Listado de métodos -->
+        <ul class="metodos-list">
+          <li *ngFor="let m of metodos" class="metodo">
+            <span class="metodo__dot" [style.background]="m.color"></span>
+            <span class="metodo__nombre">{{ m.metodo }}</span>
+            <span class="metodo__pct">{{ m.porcentaje | number:'1.0-1' }}%</span>
+            <span class="metodo__total">{{ money(m.total) }}</span>
+          </li>
+          <li *ngIf="!metodos.length" class="metodo metodo--vacio">Sin ventas registradas</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Productos más vendidos -->
+    <div class="panel panel--productos">
+      <div class="panel__head">
+        <h2>Productos más vendidos</h2>
+        <span class="panel__hint">Top {{ productos.length }} por unidades</span>
+      </div>
+
+      <ul class="prod-list" *ngIf="productos.length; else sinProductos">
+        <li *ngFor="let p of productos; let i = index" class="prod">
+          <span class="prod__rank">{{ i + 1 }}</span>
+          <div class="prod__info">
+            <div class="prod__top">
+              <span class="prod__nombre" [title]="p.nombre">{{ p.nombre }}</span>
+              <span class="prod__cant">{{ cantidad(p.cantidadVendida) }} u.</span>
+            </div>
+            <div class="prod__bar">
+              <div class="prod__fill" [style.width.%]="anchoProducto(p)"></div>
+            </div>
+            <span class="prod__total">{{ money(p.totalFacturado) }}</span>
+          </div>
+        </li>
+      </ul>
+      <ng-template #sinProductos>
+        <div class="vacio">
+          <mat-icon>inventory_2</mat-icon>
+          <span>Sin ventas en el período</span>
+        </div>
+      </ng-template>
+    </div>
+
+  </section>
+
+  <!-- Fila 2: tendencia diaria -->
+  <section class="panel panel--ancho">
+    <div class="panel__head">
+      <h2>Tendencia diaria</h2>
+      <span class="panel__hint">Total vendido por día</span>
+    </div>
+
+    <div class="grafico grafico--dias" *ngIf="dias.length; else sinDias">
+      <div class="barra" *ngFor="let d of dias" [class.barra--max]="d.esMax"
+           [attr.title]="d.etiqueta + ' — ' + money(d.total) + ' (' + d.cantidad + ' ventas)'">
+        <div class="barra__valor">{{ d.total > 0 ? money(d.total) : '' }}</div>
+        <div class="barra__col">
+          <div class="barra__fill" [style.height.%]="d.altura"></div>
+        </div>
+        <div class="barra__hora">{{ d.etiqueta }}</div>
+      </div>
+    </div>
+    <ng-template #sinDias>
+      <div class="vacio">
+        <mat-icon>show_chart</mat-icon>
+        <span>No hay ventas en el período seleccionado</span>
+      </div>
+    </ng-template>
+  </section>
+
+  <!-- Fila 3: ventas por hora + ranking cajeros -->
+  <section class="rep-panels rep-panels--inv">
+
+    <!-- Ventas por hora -->
+    <div class="panel panel--horas">
+      <div class="panel__head">
+        <h2>Ventas por hora</h2>
+        <div class="picos" *ngIf="picoMax">
+          <span class="pico pico--max">
+            <mat-icon>trending_up</mat-icon>
+            Pico {{ picoMax.etiqueta }} · {{ money(picoMax.total) }}
+          </span>
+          <span class="pico pico--min" *ngIf="picoMin && picoMin !== picoMax">
+            <mat-icon>trending_down</mat-icon>
+            Mínimo {{ picoMin.etiqueta }} · {{ money(picoMin.total) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="grafico" *ngIf="horas.length; else sinHoras">
+        <div class="barra" *ngFor="let h of horas"
+             [class.barra--max]="h.esMax" [class.barra--min]="h.esMin"
+             [attr.title]="h.etiqueta + ' — ' + money(h.total) + ' (' + h.cantidad + ' ventas)'">
+          <div class="barra__valor">{{ h.total > 0 ? money(h.total) : '' }}</div>
+          <div class="barra__col">
+            <div class="barra__fill" [style.height.%]="h.altura"></div>
+          </div>
+          <div class="barra__hora">{{ h.etiqueta }}</div>
+        </div>
+      </div>
+      <ng-template #sinHoras>
+        <div class="vacio">
+          <mat-icon>bar_chart</mat-icon>
+          <span>No hay ventas en el período seleccionado</span>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Ranking por cajero (solo admin) -->
+    <div class="panel panel--cajeros" *ngIf="esAdmin">
+      <div class="panel__head">
+        <h2>Ranking por cajero</h2>
+        <span class="panel__hint">Por monto vendido</span>
+      </div>
+
+      <ul class="cajeros-list" *ngIf="cajeros.length; else sinCajeros">
+        <li *ngFor="let c of cajeros; let i = index" class="cajero">
+          <span class="cajero__rank">{{ i + 1 }}</span>
+          <span class="cajero__nombre">{{ c.usuario }}</span>
+          <span class="cajero__cant">{{ c.cantidad }} ventas</span>
+          <span class="cajero__total">{{ money(c.total) }}</span>
+        </li>
+      </ul>
+      <ng-template #sinCajeros>
+        <div class="vacio">
+          <mat-icon>group</mat-icon>
+          <span>Sin datos</span>
+        </div>
+      </ng-template>
+    </div>
+
+  </section>
+</div>

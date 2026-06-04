@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import Swal from 'sweetalert2';
+import { NotificationService } from '../../Service/notification-service';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -34,7 +34,8 @@ export class Login implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private notif: NotificationService,
   ) { }
 
   ngOnInit(): void {
@@ -59,36 +60,12 @@ export class Login implements OnInit {
 
     this.authService.login(payload).subscribe({
       next: () => {
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'success',
-          title: 'Sesión iniciada',
-          showConfirmButton: false,
-          timer: 700,
-          timerProgressBar: true,
-          background: '#ffffff',
-          color: '#1f2937',
-          iconColor: '#16a34a'
-        }).then(() => {
-          this.router.navigate(['/app/ventas']);
-        });
+        this.notif.success('Sesión iniciada', 1200);
+        this.router.navigate(['/app/ventas']);
       },
       error: (err) => {
         this.submitting = false;
-
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'error',
-          title: 'Credenciales incorrectas',
-          showConfirmButton: false,
-          timer: 2000,
-          background: '#ffffff',
-          color: '#1f2937',
-          iconColor: '#dc2626'
-        });
-
+        this.notif.error('Credenciales incorrectas');
         console.error('Login error:', err);
       },
       complete: () => {

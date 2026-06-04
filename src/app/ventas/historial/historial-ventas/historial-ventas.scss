@@ -28,6 +28,11 @@
   align-items: center;
   margin-bottom: 20px;
 
+  mat-form-field {
+    width: 180px;
+    flex: 0 0 auto;
+  }
+
   button {
     margin-bottom: 22px; // compensa la altura del label flotante
   }

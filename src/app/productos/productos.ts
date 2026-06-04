@@ -6,7 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import Swal from 'sweetalert2';
+import { NotificationService } from '../../Service/notification-service';
+import { DialogConfirm } from '../dialog/dialog-confirm/dialog-confirm';
 
 import { ProductoService } from '../../Service/producto-service';
 import { ProductoDTO } from '../../interfaces/ProductoDTO';
@@ -47,7 +48,8 @@ export class Productos implements OnInit {
 
   constructor(
     private productoService: ProductoService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private notif: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -89,7 +91,7 @@ export class Productos implements OnInit {
       },
       error: err => {
         this.cargando = false;
-        Swal.fire('Error', 'No se pudieron cargar los productos.', 'error');
+        this.notif.error('No se pudieron cargar los productos.');
       }
     });
   }
@@ -154,31 +156,30 @@ export class Productos implements OnInit {
 
     obs.subscribe({
       next: () => {
-        Swal.fire(edita ? 'Actualizado' : 'Creado', 'El producto se guardó correctamente.', 'success');
+        this.notif.success(edita ? 'Producto actualizado' : 'Producto creado');
         this.resetearYRecargar();
       },
-      error: () => Swal.fire('Error', 'No se pudo guardar el producto.', 'error')
+      error: () => this.notif.error('No se pudo guardar el producto.')
     });
   }
 
   eliminarProducto(producto: ProductoDTO): void {
-    Swal.fire({
-      title: `¿Eliminar ${producto.nombre}?`,
-      text: "Esta acción es irreversible.",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then(r => {
-      if (r.isConfirmed) {
-        this.productoService.eliminar(producto.id!).subscribe({
-          next: () => {
-            Swal.fire('Eliminado', 'Producto eliminado correctamente.', 'success');
-            this.resetearYRecargar();
-          },
-          error: () => Swal.fire('Error', 'No se pudo eliminar el producto.', 'error')
-        });
-      }
+    this.dialog.open(DialogConfirm, {
+      data: {
+        title: `¿Eliminar ${producto.nombre}?`,
+        message: 'Esta acción es irreversible.',
+        confirmText: 'Eliminar',
+        variant: 'danger',
+      },
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.productoService.eliminar(producto.id!).subscribe({
+        next: () => {
+          this.notif.success('Producto eliminado correctamente.');
+          this.resetearYRecargar();
+        },
+        error: () => this.notif.error('No se pudo eliminar el producto.')
+      });
     });
   }
 

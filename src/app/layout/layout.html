@@ -1,74 +1,114 @@
 <mat-sidenav-container class="app-sidenav-container">
 
     <mat-sidenav #sidenav class="app-sidenav" mode="side" [opened]="isSidebarOpen()">
-   
-        <mat-nav-list>
 
-            <a mat-list-item routerLink="/app/ventas" routerLinkActive="active">
-                <span>🛒 MOSTRADOR</span>
-            </a>
-
-            <a mat-list-item routerLink="/app/ventas/historial" routerLinkActive="active">
-                <span>📜 HISTORIAL</span>
-            </a>
-
-            <a mat-list-item routerLink="/app/historialcaja" routerLinkActive="active">
-                <span>💵 CAJA</span>                
-            </a>
-
-            <a mat-list-item routerLink="/app/productos" routerLinkActive="active">
-                <span>📦 PRODUCTOS</span>
-            </a>
-
-            <a mat-list-item routerLink="/app/proveedores" routerLinkActive="active">
-                <span>🚛 PROVEEDORES</span>
-            </a>
-
-            <a mat-list-item routerLink="/app/rubros" routerLinkActive="active">
-                <span>🏷️ RUBROS</span>
-            </a>
-
-            <a mat-list-item routerLink="/app/clientes" routerLinkActive="active">
-                <span>👥 CLIENTES</span>
-            </a>
-
-            <a mat-list-item routerLink="/app/condicioniva" routerLinkActive="active">
-                <span>🧾 CONDICIÓN IVA</span>
-            </a>
-            
-            <div *ngIf="authService.isLoggedIn()" class="user-info">
-                <strong>👤 {{ authService.userName.toUpperCase() }}</strong>
-
-                <div>📧 {{ authService.email }}</div>
-
-                <div>🖥️ MÁQUINA: {{ authService.maquinaId }}</div>
-
-                <div *ngIf="authService.isAdmin">
-                    👑 ADMINISTRADOR
-                </div>
-
-                <div *ngIf="authService.isEmpleado">
-                    🛠️ EMPLEADO
-                </div>
+        <div class="brand">
+            <img src="logo.png" alt="La Nueva Bodega" />
+            <div class="brand__text">
+                <span class="brand__name">La Nueva Bodega</span>
+                <span class="brand__sub">Sistema de gestión</span>
             </div>
-            
-            <a mat-list-item (click)="onLogout()" class="logout-link">
-                <span>🔒 CERRAR SESIÓN</span>
+        </div>
+
+        <nav class="nav">
+
+            <a class="nav__item" routerLink="/app/ventas" routerLinkActive="is-active">
+                <mat-icon>point_of_sale</mat-icon>
+                <span>Mostrador</span>
             </a>
 
-        </mat-nav-list>
+            <a class="nav__item" routerLink="/app/ventas/historial" routerLinkActive="is-active">
+                <mat-icon>receipt_long</mat-icon>
+                <span>Historial de ventas</span>
+            </a>
+
+            <a class="nav__item" routerLink="/app/reportes" routerLinkActive="is-active">
+                <mat-icon>insights</mat-icon>
+                <span>Reportes</span>
+            </a>
+
+            <a class="nav__item" routerLink="/app/historialcaja" routerLinkActive="is-active">
+                <mat-icon>payments</mat-icon>
+                <span>Caja</span>
+            </a>
+
+            <div class="nav__sep">Catálogo</div>
+
+            <a class="nav__item" routerLink="/app/productos" routerLinkActive="is-active">
+                <mat-icon>inventory_2</mat-icon>
+                <span>Productos</span>
+            </a>
+
+            <a class="nav__item" routerLink="/app/proveedores" routerLinkActive="is-active">
+                <mat-icon>local_shipping</mat-icon>
+                <span>Proveedores</span>
+            </a>
+
+            <a class="nav__item" routerLink="/app/rubros" routerLinkActive="is-active">
+                <mat-icon>category</mat-icon>
+                <span>Rubros</span>
+            </a>
+
+            <div class="nav__sep">Clientes</div>
+
+            <a class="nav__item" routerLink="/app/clientes" routerLinkActive="is-active">
+                <mat-icon>groups</mat-icon>
+                <span>Clientes</span>
+            </a>
+
+            <a class="nav__item" routerLink="/app/condicioniva" routerLinkActive="is-active">
+                <mat-icon>request_quote</mat-icon>
+                <span>Condición IVA</span>
+            </a>
+        </nav>
+
+        <div class="user" *ngIf="authService.isLoggedIn()">
+            <div class="user__avatar">
+                {{ (authService.userName || '?').charAt(0).toUpperCase() }}
+            </div>
+            <div class="user__body">
+                <span class="user__name">{{ authService.userName }}</span>
+                <span class="user__role">
+                    <ng-container *ngIf="authService.isAdmin">Administrador</ng-container>
+                    <ng-container *ngIf="authService.isEmpleado">Empleado</ng-container>
+                </span>
+                <span class="user__meta">{{ authService.maquinaId || 'Sin máquina' }}</span>
+            </div>
+            <button mat-icon-button class="user__logout" (click)="onLogout()" matTooltip="Cerrar sesión" aria-label="Cerrar sesión">
+                <mat-icon>logout</mat-icon>
+            </button>
+        </div>
 
     </mat-sidenav>
 
     <mat-sidenav-content class="main-content-area">
 
-        <mat-toolbar color="primary" class="app-toolbar">
+        <mat-toolbar class="app-toolbar">
 
-            <button mat-icon-button (click)="toggleSidebar()">
+            <button mat-icon-button (click)="toggleSidebar()" aria-label="Menú">
                 <mat-icon>menu</mat-icon>
             </button>
-            
+
             <span class="spacer"></span>
+
+            <button type="button"
+                    class="caja-pill"
+                    [class.is-open]="cajaAbierta"
+                    (click)="cajaAbierta ? cerrarCaja() : abrirCaja()"
+                    [matTooltip]="cajaAbierta ? 'Cerrar caja (F6)' : 'Abrir caja (F6)'">
+                <span class="dot"></span>
+                <span>{{ cajaAbierta ? 'Caja abierta' : 'Caja cerrada' }}</span>
+            </button>
+
+            <button type="button"
+                    class="toolbar-retiro"
+                    [disabled]="!cajaAbierta"
+                    (click)="retirarDinero()"
+                    matTooltip="Retirar dinero (F7)">
+                <mat-icon>payments</mat-icon>
+                <span>Retiro</span>
+                <kbd>F7</kbd>
+            </button>
 
         </mat-toolbar>
 

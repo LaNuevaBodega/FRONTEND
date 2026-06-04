@@ -14,6 +14,7 @@ import { HistorialVentas } from './ventas/historial/historial-ventas/historial-v
 import { CajaHistorial } from './caja-historial/caja-historial';
 import { Clientes } from './clientes/clientes';
 import { Condicioniva } from './condicioniva/condicioniva';
+import { Reportes } from './reportes/reportes';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -32,6 +33,7 @@ export const routes: Routes = [
         ]
       },
       { path: 'dashboard', component: Dashboard },
+      { path: 'reportes', component: Reportes },
       { path: 'historialcaja', component: CajaHistorial },
       { path: 'proveedores', component: Proveedores },
       { path: 'rubros', component: Rubros },

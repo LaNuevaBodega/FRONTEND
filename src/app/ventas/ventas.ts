@@ -5,7 +5,7 @@ import { CajaDTO } from "../../interfaces/CajaDTO/CajaDTO";
 import { CajaService } from "../../Service/caja-service";
 import { VentasService } from "../../Service/ventas-service";
 import { MatDialog } from "@angular/material/dialog";
-import Swal from "sweetalert2";
+import { NotificationService } from "../../Service/notification-service";
 import { MatSlideToggleChange, MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { TicketService } from "../../Service/ticket-service";
 import { FacturaService } from "../../Service/factura-service";
@@ -39,7 +39,8 @@ export class Ventas implements OnInit {
     private ticketService: TicketService,
     private ticketServiceArca: TicketServiceArca,
     private facturaService: FacturaService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private notif: NotificationService,
   ) { }
 
   ngOnInit() {
@@ -67,7 +68,7 @@ export class Ventas implements OnInit {
       if (monto === null || monto === undefined) return;
       this.cajaService.abrirCaja(Number(monto)).subscribe({
         next: caja => { this.cajaAbierta = caja; },
-        error: err => { Swal.fire('Error', err.error?.mensaje ?? 'Error al abrir caja', 'error'); }
+        error: err => { this.notif.error(err.error?.mensaje ?? 'Error al abrir caja'); }
       });
     });
   }
@@ -96,33 +97,33 @@ export class Ventas implements OnInit {
   }
 
   pagarRapido() {
-    if (!this.cajaAbierta) { Swal.fire('Caja cerrada', 'Debe abrir la caja', 'warning'); return; }
+    if (!this.cajaAbierta) { this.notif.warning('Caja cerrada — Debe abrir la caja'); return; }
     if (!this.carrito || this.carrito.carrito.length === 0) return;
     this.carrito.confirmarVentaRapida();
   }
 
   retirarDinero() {
-    if (!this.cajaAbierta) { Swal.fire('Caja cerrada', 'Debe abrir la caja', 'warning'); return; }
+    if (!this.cajaAbierta) { this.notif.warning('Caja cerrada — Debe abrir la caja'); return; }
 
     const ref = this.dialog.open(DialogRetirarDinero, { disableClose: true });
     ref.afterClosed().subscribe(resultado => {
       if (!resultado) return;
       this.cajaService.retirar(resultado.monto, resultado.motivo).subscribe({
         next: () => { },
-        error: err => { Swal.fire('Error', err.error?.mensaje ?? 'Error al retirar', 'error'); }
+        error: err => { this.notif.error(err.error?.mensaje ?? 'Error al retirar'); }
       });
     });
   }
 
   crearVenta(pedido: PedidoVenta) {
     if (!this.cajaAbierta) {
-      Swal.fire('Caja cerrada', 'Debe abrir la caja', 'warning');
+      this.notif.warning('Caja cerrada — Debe abrir la caja');
       return;
     }
 
     this.ventasService.crearVenta(pedido.dto).subscribe({
       next: venta => {
-        Swal.fire({ icon: 'success', title: 'Venta registrada', timer: 1500, showConfirmButton: false });
+        this.notif.success('Venta registrada');
 
         if (pedido.ticketFiscal && pedido.clienteId != null) {
           this.facturaService.solicitar({ ventaId: venta.id, clienteId: pedido.clienteId }).subscribe({
@@ -131,7 +132,7 @@ export class Ventas implements OnInit {
               this.ticketServiceArca.imprimir(html);
             },
             error: err => {
-              Swal.fire('Error ARCA', err.error?.mensaje ?? 'No se pudo emitir la factura electrónica', 'error');
+              this.notif.error('Error ARCA — ' + (err.error?.mensaje ?? 'No se pudo emitir la factura electrónica'));
               if (pedido.imprimirTicket) {
                 const html = this.ticketService.generarHtmlVenta(venta);
                 this.ticketService.imprimir(html);
@@ -144,7 +145,7 @@ export class Ventas implements OnInit {
         }
       },
       error: err => {
-        Swal.fire('Error', err.error?.mensaje ?? 'Error al crear venta', 'error');
+        this.notif.error(err.error?.mensaje ?? 'Error al crear venta');
       }
     });
   }

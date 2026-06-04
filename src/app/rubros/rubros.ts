@@ -5,7 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import {MatCardModule} from '@angular/material/card';
-import Swal from 'sweetalert2'; 
+import { NotificationService } from '../../Service/notification-service';
+import { DialogConfirm } from '../dialog/dialog-confirm/dialog-confirm';
 import { RubroService } from '../../Service/rubro-service';
 import { RubroDTO } from '../../interfaces/RubroDTO';
 import { DialogRubro } from '../dialog/dialog-rubro/dialog-rubro';
@@ -28,7 +29,8 @@ export class Rubros implements OnInit {
     
   constructor(
     private rubroService: RubroService,
-    private dialog: MatDialog 
+    private dialog: MatDialog,
+    private notif: NotificationService,
   ) {}
 
   rubros: RubroDTO[] = [];
@@ -45,7 +47,7 @@ export class Rubros implements OnInit {
       },
       error: (err) => {
         console.error('Error al cargar rubros:', err);
-        Swal.fire('Error de Carga', 'No se pudieron obtener los rubros.', 'error');
+        this.notif.error('No se pudieron obtener los rubros.');
       }
     });
   }
@@ -80,38 +82,35 @@ export class Rubros implements OnInit {
     obs.subscribe({
       next: () => {
         this.cargarRubros();
-        Swal.fire(titulo, 'La operación se completó correctamente.', 'success');
+        this.notif.success(titulo);
       },
       error: (err) => {
         const errorMsg = err.error?.error || 'Ocurrió un error en la operación de guardado.';
-        Swal.fire('Error', errorMsg, 'error');
+        this.notif.error(errorMsg);
       }
     });
   }
   
   eliminarRubro(id: number, nombre: string): void {
-    Swal.fire({
-      title: `¿Eliminar ${nombre}?`,
-      text: "¡Esta acción no se puede revertir!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.rubroService.eliminar(id).subscribe({
-          next: () => {
-            this.cargarRubros();
-            Swal.fire('Eliminado', `El rubro ${nombre} ha sido eliminado.`, 'success');
-          },
-          error: (err) => {
-            const errorMsg = err.error?.error || 'No se pudo eliminar el rubro.';
-            Swal.fire('Error', errorMsg, 'error');
-          }
-        });
-      }
+    this.dialog.open(DialogConfirm, {
+      data: {
+        title: `¿Eliminar ${nombre}?`,
+        message: 'Esta acción no se puede revertir.',
+        confirmText: 'Eliminar',
+        variant: 'danger',
+      },
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.rubroService.eliminar(id).subscribe({
+        next: () => {
+          this.cargarRubros();
+          this.notif.success(`Rubro ${nombre} eliminado`);
+        },
+        error: (err) => {
+          const errorMsg = err.error?.error || 'No se pudo eliminar el rubro.';
+          this.notif.error(errorMsg);
+        }
+      });
     });
   }
 }

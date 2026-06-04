@@ -9,10 +9,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import Swal from 'sweetalert2';
 import { ClienteService } from '../../Service/cliente-service';
 import { ClienteDTO, EditarClienteDTO } from '../../interfaces/ClienteDTO';
 import { ClienteDialog } from './cliente-dialog';
+import { NotificationService } from '../../Service/notification-service';
+import { DialogConfirm } from '../dialog/dialog-confirm/dialog-confirm';
 
 @Component({
   selector: 'app-clientes',
@@ -44,6 +45,7 @@ export class Clientes implements OnInit {
   constructor(
     private clienteService: ClienteService,
     private dialog: MatDialog,
+    private notif: NotificationService,
   ) {}
 
   ngOnInit() {
@@ -94,9 +96,9 @@ export class Clientes implements OnInit {
       this.clienteService.crear(dto).subscribe({
         next: nuevo => {
           this.dataSource.data = [...this.dataSource.data, nuevo];
-          Swal.fire({ icon: 'success', title: 'Cliente creado', timer: 1500, showConfirmButton: false });
+          this.notif.success('Cliente creado');
         },
-        error: err => Swal.fire({ icon: 'error', title: 'Error', text: err.error?.mensaje ?? 'No se pudo crear el cliente' }),
+        error: err => this.notif.error(err.error?.mensaje ?? 'No se pudo crear el cliente'),
       });
     });
   }
@@ -110,30 +112,29 @@ export class Clientes implements OnInit {
           const data = [...this.dataSource.data];
           data[data.findIndex(c => c.id === cliente.id)] = actualizado;
           this.dataSource.data = data;
-          Swal.fire({ icon: 'success', title: 'Cliente actualizado', timer: 1500, showConfirmButton: false });
+          this.notif.success('Cliente actualizado');
         },
-        error: err => Swal.fire({ icon: 'error', title: 'Error', text: err.error?.mensaje ?? 'No se pudo actualizar el cliente' }),
+        error: err => this.notif.error(err.error?.mensaje ?? 'No se pudo actualizar el cliente'),
       });
     });
   }
 
   eliminar(cliente: ClienteDTO) {
-    Swal.fire({
-      title: '¿Eliminar cliente?',
-      text: `${cliente.razonSocial} será eliminado definitivamente.`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Eliminar',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#d32f2f',
-    }).then(result => {
-      if (!result.isConfirmed) return;
+    this.dialog.open(DialogConfirm, {
+      data: {
+        title: '¿Eliminar cliente?',
+        message: `${cliente.razonSocial} será eliminado definitivamente.`,
+        confirmText: 'Eliminar',
+        variant: 'danger',
+      },
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
       this.clienteService.eliminar(cliente.id).subscribe({
         next: () => {
           this.dataSource.data = this.dataSource.data.filter(c => c.id !== cliente.id);
-          Swal.fire({ icon: 'success', title: 'Cliente eliminado', timer: 1500, showConfirmButton: false });
+          this.notif.success('Cliente eliminado');
         },
-        error: err => Swal.fire({ icon: 'error', title: 'Error', text: err.error?.mensaje ?? 'No se pudo eliminar el cliente' }),
+        error: err => this.notif.error(err.error?.mensaje ?? 'No se pudo eliminar el cliente'),
       });
     });
   }

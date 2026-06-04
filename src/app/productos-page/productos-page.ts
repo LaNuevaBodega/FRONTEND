@@ -8,7 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ProductoService } from '../../Service/producto-service';
 import { DialogProducto } from '../dialog/dialog-producto/dialog-producto';
 import { StockService } from '../../Service/stock-service';
-import Swal from 'sweetalert2';
+import { NotificationService } from '../../Service/notification-service';
+import { DialogConfirm } from '../dialog/dialog-confirm/dialog-confirm';
 import { DialogAjusteStock } from '../dialog/dialog-ajuste-stock/dialog-ajuste-stock';
 
 @Component({
@@ -35,7 +36,7 @@ export class ProductosPage implements OnDestroy {
     private dialog: MatDialog,
     private service: ProductoService,
     private stockService: StockService,
-
+    private notif: NotificationService,
   ) { }
 
 
@@ -56,31 +57,10 @@ export class ProductosPage implements OnDestroy {
             this.productoSeleccionado = actualizarProducto;
             this.refrescarLista();
 
-            Swal.fire({
-              toast: true,
-              position: 'top-end',
-              icon: 'success',
-              title: 'Producto actualizado',
-              showConfirmButton: false,
-              timer: 1200,
-              timerProgressBar: true,
-              background: '#ffffff',
-              color: '#1f2937',
-              iconColor: '#16a34a'
-            });
+            this.notif.success('Producto actualizado');
           },
           error: () => {
-            Swal.fire({
-              toast: true,
-              position: 'top-end',
-              icon: 'error',
-              title: 'Error al actualizar',
-              showConfirmButton: false,
-              timer: 2000,
-              background: '#ffffff',
-              color: '#1f2937',
-              iconColor: '#dc2626'
-            });
+            this.notif.error('Error al actualizar');
           }
         });
 
@@ -91,47 +71,24 @@ export class ProductosPage implements OnDestroy {
 
 
   onEliminar(prod: ProductoDTO) {
-    Swal.fire({
-      title: '¿Desea eliminar este producto?',
-      text: prod.nombre,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
-      reverseButtons: true
-    }).then(result => {
-      if (!result.isConfirmed) return;
+    this.dialog.open(DialogConfirm, {
+      data: {
+        title: '¿Eliminar producto?',
+        message: prod.nombre,
+        confirmText: 'Eliminar',
+        variant: 'danger',
+      },
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
 
       this.service.eliminar(prod.id).subscribe({
         next: () => {
           this.productoSeleccionado = null;
           this.refrescarLista();
-
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: 'Producto eliminado',
-            showConfirmButton: false,
-            timer: 1200,
-            timerProgressBar: true,
-            background: '#ffffff',
-            color: '#1f2937',
-            iconColor: '#16a34a'
-          });
+          this.notif.success('Producto eliminado');
         },
         error: () => {
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'error',
-            title: 'Error al eliminar',
-            showConfirmButton: false,
-            timer: 2000,
-            background: '#ffffff',
-            color: '#1f2937',
-            iconColor: '#dc2626'
-          });
+          this.notif.error('Error al eliminar');
         }
       });
     });
@@ -153,18 +110,7 @@ export class ProductosPage implements OnDestroy {
           this.refrescarLista();
 
 
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: 'Producto creado',
-            showConfirmButton: false,
-            timer: 1200,
-            timerProgressBar: true,
-            background: '#ffffff',
-            color: '#1f2937',
-            iconColor: '#16a34a'
-          });
+          this.notif.success('Producto creado');
         }
       });
 
@@ -188,31 +134,10 @@ export class ProductosPage implements OnDestroy {
 
           this.refrescarLista();
 
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: 'Stock ajustado correctamente',
-            showConfirmButton: false,
-            timer: 1200,
-            timerProgressBar: true,
-            background: '#ffffff',
-            color: '#1f2937',
-            iconColor: '#16a34a'
-          });
+          this.notif.success('Stock ajustado correctamente');
         },
         error: () => {
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'error',
-            title: 'Error al ajustar stock',
-            showConfirmButton: false,
-            timer: 2000,
-            background: '#ffffff',
-            color: '#1f2937',
-            iconColor: '#dc2626'
-          });
+          this.notif.error('Error al ajustar stock');
         }
       });
     });
@@ -231,7 +156,7 @@ export class ProductosPage implements OnDestroy {
       const granel = productos;
 
       if (granel.length === 0) {
-        Swal.fire('Sin productos', 'No hay productos a granel con PLU configurado.', 'info');
+        this.notif.info('Sin productos — No hay productos a granel con PLU configurado.');
         return;
       }
 

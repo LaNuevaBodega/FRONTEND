@@ -11,7 +11,9 @@
       "Bash(xargs grep *)",
       "Bash(npx tsc *)",
       "Bash(Get-Content \"d:\\\\LANUEVABODEGA\\\\distribuidora\\\\src\\\\app\\\\dialog\\\\dialog-producto\\\\dialog-producto.ts\")",
-      "Bash(npx ng *)"
+      "Bash(npx ng *)",
+      "Bash(git -C \"d:/LANUEVABODEGA/distribuidora\" log --oneline -20 -- \"src/app/ventas/historial/historial-ventas/\")",
+      "Bash(git -C \"d:/LANUEVABODEGA/distribuidora\" diff HEAD -- \"src/app/ventas/historial/historial-ventas/\" \"src/styles.scss\")"
     ],
     "additionalDirectories": [
       "d:\\LANUEVABODEGA\\bodegaback\\Controllers",

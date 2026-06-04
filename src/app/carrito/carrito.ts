@@ -68,8 +68,8 @@ export class Carrito {
   abrirDialogoPago(): void {
     const dialogRef = this.dialog.open(DialogPago, {
       data: { total: this.total },
-      width: '600px',
-      maxWidth: '90vw',
+      width: '760px',
+      maxWidth: '95vw',
       disableClose: true
     });
 

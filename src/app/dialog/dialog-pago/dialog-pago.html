@@ -1,5 +1,5 @@
-﻿<h2 mat-dialog-title>
-  <span *ngIf="paso === 1">Finalizar Venta — {{ data.total | currency }}</span>
+<h2 mat-dialog-title>
+  <span *ngIf="paso === 1">Finalizar Venta</span>
   <span *ngIf="paso === 2">Opciones de comprobante</span>
 </h2>
 
@@ -8,42 +8,131 @@
   <!-- ══ PASO 1: Selección de pago ══ -->
   <ng-container *ngIf="paso === 1">
 
-    <div class="toggle-mix">
-      <mat-slide-toggle [(ngModel)]="modoMix" (change)="activarMix()">
-        Pago mixto
-      </mat-slide-toggle>
+    <!-- Banner de total -->
+    <div class="total-banner">
+      <span class="total-label">Total a cobrar</span>
+      <span class="total-monto">{{ data.total | currency }}</span>
     </div>
 
-    <!-- Modo simple: un botón por método -->
-    <div *ngIf="!modoMix" class="metodos-grid">
-      <button mat-raised-button color="primary" *ngFor="let m of metodos" (click)="pagoRapido(m)">
-        {{ m.nombre }}
+    <!-- Selector de modo -->
+    <div class="modo-segmento" role="tablist">
+      <button type="button" class="seg-btn" [class.activo]="!modoMix" (click)="setModoSimple()">
+        <mat-icon>payments</mat-icon>
+        <span>Pago único</span>
+      </button>
+      <button type="button" class="seg-btn" [class.activo]="modoMix" (click)="setModoMixto()">
+        <mat-icon>splitscreen</mat-icon>
+        <span>Pago mixto</span>
       </button>
     </div>
 
-    <!-- Modo mix: ingresar montos -->
-    <div *ngIf="modoMix">
-      <div class="metodos-grid">
-        <button mat-stroked-button *ngFor="let m of metodos" (click)="agregarPago(m)">
-          + {{ m.nombre }}
+    <!-- ─── MODO ÚNICO ─── -->
+    <div *ngIf="!modoMix" class="metodos-grid-simple">
+      <button class="metodo-btn-grande" *ngFor="let m of metodos" (click)="pagoRapido(m)">
+        <mat-icon>{{ getIconForMetodo(m.nombre) }}</mat-icon>
+        <span>{{ m.nombre }}</span>
+      </button>
+    </div>
+
+    <!-- ─── MODO MIXTO ─── -->
+    <div *ngIf="modoMix" class="mixto-layout">
+
+      <!-- Columna izquierda: lista + agregar -->
+      <div class="mixto-lista-wrap">
+
+        <div class="mixto-lista">
+
+          <div *ngIf="pagosSeleccionados.length === 0" class="lista-vacia">
+            <mat-icon>add_card</mat-icon>
+            <span>Agregá un método de pago para empezar</span>
+          </div>
+
+          <div
+            *ngFor="let p of pagosSeleccionados; let i = index"
+            class="pago-fila"
+            [class.activo]="pagoActivoIndex === i"
+            (click)="setPagoActivo(i)">
+            <mat-icon class="pago-icono">{{ getIconForMetodo(p.nombreMetodo) }}</mat-icon>
+            <div class="pago-info">
+              <span class="pago-nombre">{{ p.nombreMetodo }}</span>
+              <small *ngIf="pagoActivoIndex === i">Editando…</small>
+            </div>
+            <span class="pago-monto">{{ p.monto | currency }}</span>
+            <button
+              type="button"
+              class="pago-quitar"
+              (click)="quitarPago(i); $event.stopPropagation()"
+              aria-label="Quitar pago">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Botones agregar método -->
+        <div class="agregar-metodos">
+          <button
+            type="button"
+            class="btn-agregar"
+            *ngFor="let m of metodos"
+            (click)="agregarPago(m)">
+            <mat-icon>{{ getIconForMetodo(m.nombre) }}</mat-icon>
+            <span>{{ m.nombre }}</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Columna derecha: teclado numérico -->
+      <div class="keypad" [class.disabled]="pagoActivoIndex < 0">
+        <button type="button" class="key" (click)="keypadDigit(7)">7</button>
+        <button type="button" class="key" (click)="keypadDigit(8)">8</button>
+        <button type="button" class="key" (click)="keypadDigit(9)">9</button>
+
+        <button type="button" class="key" (click)="keypadDigit(4)">4</button>
+        <button type="button" class="key" (click)="keypadDigit(5)">5</button>
+        <button type="button" class="key" (click)="keypadDigit(6)">6</button>
+
+        <button type="button" class="key" (click)="keypadDigit(1)">1</button>
+        <button type="button" class="key" (click)="keypadDigit(2)">2</button>
+        <button type="button" class="key" (click)="keypadDigit(3)">3</button>
+
+        <button type="button" class="key key-secundaria" (click)="keypadClear()">C</button>
+        <button type="button" class="key" (click)="keypadDigit(0)">0</button>
+        <button type="button" class="key key-secundaria" (click)="keypadBackspace()" aria-label="Borrar">
+          <mat-icon>backspace</mat-icon>
+        </button>
+
+        <button
+          type="button"
+          class="key key-restante"
+          (click)="keypadRestante()"
+          [disabled]="pagoActivoIndex < 0 || restante <= 0">
+          = Restante
         </button>
       </div>
 
-      <hr>
+    </div>
 
-      <div class="lista-pagos" *ngFor="let p of pagosSeleccionados; let i = index">
-        <div class="pago-item">
-          <span>{{ p.nombreMetodo }}</span>
-          <input type="number" [(ngModel)]="p.monto" (ngModelChange)="validarTotales()" class="monto-input">
-          <button mat-icon-button color="warn" (click)="quitarPago(i)">
-            <mat-icon>delete</mat-icon>
-          </button>
+    <!-- Resumen totales (modo mixto) -->
+    <div *ngIf="modoMix" class="resumen-mixto">
+      <div class="resumen-cells">
+        <div class="resumen-cell">
+          <span>Pagado</span>
+          <strong>{{ sumaPagos | currency }}</strong>
+        </div>
+        <div class="resumen-cell">
+          <span>Restante</span>
+          <strong
+            [class.ok]="restante === 0 && sumaPagos > 0"
+            [class.error]="restante > 0"
+            [class.vuelto]="restante < 0">
+            {{ restante | currency }}
+          </strong>
         </div>
       </div>
-
-      <div class="resumen-totales" [class.error]="restante !== 0">
-        <p>Suma pagos: {{ sumaPagos | currency }}</p>
-        <p><strong>Restante: {{ restante | currency }}</strong></p>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="progresoPagado"></div>
       </div>
     </div>
 
@@ -121,7 +210,11 @@
 <mat-dialog-actions align="end">
   <ng-container *ngIf="paso === 1">
     <button mat-button (click)="onCancel()">Cancelar</button>
-    <button mat-raised-button color="primary" *ngIf="modoMix" (click)="onConfirm()"
+    <button
+      mat-raised-button
+      color="primary"
+      *ngIf="modoMix"
+      (click)="onConfirm()"
       [disabled]="restante !== 0 || pagosSeleccionados.length === 0">
       Confirmar Pago
     </button>
@@ -136,4 +229,3 @@
     </button>
   </ng-container>
 </mat-dialog-actions>
-

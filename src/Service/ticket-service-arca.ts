@@ -84,9 +84,10 @@ export class TicketServiceArca {
 <style>
 @page { size: 80mm auto; margin: 0; }
 body { width: 72mm; margin: 0 auto; padding: 3mm; font-family: monospace; font-size: 10px; }
-.header { display: flex; justify-content: space-between; align-items: flex-start; }
-.emisor { flex: 1; }
-.letra-box { border: 2px solid #000; width: 14mm; height: 14mm; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; flex-shrink: 0; }
+.header { text-align: center; }
+.emisor { margin-top: 2mm; }
+.letra-box { border: 2px solid #000; width: 14mm; height: 14mm; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin: 0 auto; }
+.letra-wrap { margin-bottom: 2mm; }
 .line { border-top: 1px dashed #000; margin: 4px 0; }
 .center { text-align: center; }
 .r { text-align: right; }
@@ -101,17 +102,16 @@ td { vertical-align: top; padding: 1px 2px; }
 <body>
 
 <div class="header">
+  <img src="${this.logoBase64}" class="logo"/>
+  <div class="letra-wrap">
+    <div class="letra-box">${letra}</div>
+    <div style="font-size:8px">ORIGINAL</div>
+  </div>
   <div class="emisor">
-  
-  <img src="${this.logoBase64}" class="logo"/><br>
     <b>${factura.emisorRazonSocial}</b><br>
     CUIT: ${factura.emisorCuit}<br>
     ${factura.emisorDomicilio ? factura.emisorDomicilio + '<br>' : ''}
     IVA Responsable Inscripto
-  </div>
-  <div style="text-align:center">
-    <div class="letra-box">${letra}</div>
-    <div style="font-size:8px">ORIGINAL</div>
   </div>
 </div>
 

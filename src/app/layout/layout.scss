@@ -1,118 +1,285 @@
-$sidenav-width: 260px;
-$sidenav-collapsed-width: 70px;
-$primary-color: #3f51b5; 
-$bg-light: #f5f5f5;
-$active-bg: rgba(63, 81, 181, 0.1);
-$logout-red: #d32f2f;
+$sidenav-width: 252px;
 
 .app-sidenav-container {
   height: 100vh;
   width: 100%;
-  // ❌ Sacá overflow-x: hidden, corta la animación del sidenav
+  background: var(--lnb-bg);
+}
 
-  .app-sidenav {
-    width: $sidenav-width;
-    border-right: 1px solid rgba(0, 0, 0, 0.12);
-    background-color: #fff;
+.app-sidenav {
+  width: $sidenav-width;
+  background: var(--lnb-surface);
+  border-right: 1px solid var(--lnb-border) !important;
+
+  // Material projects content into an inner container; the flex column
+  // must live there so .nav (flex:1) can push the user card to the bottom.
+  ::ng-deep .mat-drawer-inner-container {
     display: flex;
     flex-direction: column;
-    // ❌ Sacá overflow: hidden del sidenav también
-    
-    mat-nav-list {
-      padding-top: 8px;
-      display: flex; 
-      flex-direction: column; 
-      height: 98%;
-      overflow-x: hidden;
+    height: 100%;
+  }
+}
 
-      a[mat-list-item] {
-        margin: 4px 8px;
-        border-radius: 8px;
-        height: 48px;
-        transition: all 0.2s ease;
+/* ---------- Brand ---------- */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 18px 14px;
+  border-bottom: 1px solid var(--lnb-border-soft);
 
-        span {
-          font-weight: 500;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        &:hover {
-          background-color: rgba(0, 0, 0, 0.04);
-        }
-
-        &.active {
-          color: $primary-color;
-          background-color: $active-bg;
-
-          span {
-            font-weight: 600;
-          }
-        }
-      }
-
-      .logout-link {
-        color: $logout-red;
-        margin-top: 20px;
-        border-top: 1px solid rgba(0, 0, 0, 0.08);
-      }
-    }
-
-    .user-info {
-      margin-top: auto;
-      padding: 16px;
-      background-color: #fafafa;
-      border-top: 1px solid rgba(0, 0, 0, 0.06);
-      font-size: 0.85rem;
-      color: #555;
-
-      strong {
-        display: block;
-        color: #333;
-        margin-bottom: 4px;
-        font-size: 0.95rem;
-      }
-
-      div {
-        margin-bottom: 2px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
-    }
+  img {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
   }
 
-  .main-content-area {
+  &__text {
     display: flex;
     flex-direction: column;
-    background-color: $bg-light;
-    // ✅ Transición suave cuando el contenido se empuja
-    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    line-height: 1.1;
+  }
 
-    mat-toolbar {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      display: flex;
-      justify-content: space-between;
+  &__name {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--lnb-primary);
+    letter-spacing: -0.01em;
+  }
 
-      .spacer {
-        flex: 1 1 auto;
-      }
+  &__sub {
+    font-size: 11px;
+    color: var(--lnb-text-soft);
+    margin-top: 2px;
+  }
+}
+
+/* ---------- Nav ---------- */
+.nav {
+  flex: 1;
+  padding: 12px 10px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &__sep {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--lnb-text-soft);
+    margin: 14px 12px 6px;
+  }
+
+  &__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: var(--lnb-radius-sm);
+    color: var(--lnb-text-muted);
+    font-size: 13.5px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.12s ease, color 0.12s ease;
+
+    mat-icon {
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+      color: var(--lnb-text-soft);
+      transition: color 0.12s ease;
     }
 
-    .router-content {
-      padding: 20px;
-      flex: 1;
-      overflow-y: auto;
+    &:hover {
+      background: var(--lnb-surface-2);
+      color: var(--lnb-text);
+      text-decoration: none;
+      mat-icon { color: var(--lnb-text-muted); }
+    }
+
+    &.is-active {
+      background: var(--lnb-primary-soft);
+      color: var(--lnb-primary);
+      font-weight: 600;
+      mat-icon { color: var(--lnb-primary); }
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: -10px;
+        top: 6px;
+        bottom: 6px;
+        width: 3px;
+        border-radius: 0 3px 3px 0;
+        background: var(--lnb-primary);
+      }
     }
   }
 }
 
-.header {
-  padding: 10px;
+/* ---------- User card ---------- */
+.user {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--lnb-border-soft);
+  background: var(--lnb-surface-2);
+
+  &__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--lnb-primary);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  &__name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--lnb-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__role {
+    font-size: 11px;
+    color: var(--lnb-primary);
+    font-weight: 500;
+  }
+
+  &__meta {
+    font-size: 10.5px;
+    color: var(--lnb-text-soft);
+    margin-top: 2px;
+  }
+
+  &__logout {
+    color: var(--lnb-text-muted) !important;
+    &:hover { color: var(--lnb-danger) !important; }
+  }
+}
+
+/* ---------- Main area ---------- */
+.main-content-area {
+  display: flex;
+  flex-direction: column;
+  background: var(--lnb-bg);
+}
+
+.app-toolbar {
+  background: var(--lnb-surface) !important;
+  color: var(--lnb-text) !important;
+  height: 54px !important;
+  border-bottom: 1px solid var(--lnb-border);
+  box-shadow: none !important;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  .spacer { flex: 1 1 auto; }
+}
+
+.caja-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--lnb-surface-2);
+  color: var(--lnb-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--lnb-border);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+
+  &:hover { background: var(--lnb-border-soft, #eceff1); }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--lnb-text-soft);
+  }
+
+  &.is-open {
+    background: var(--lnb-success-soft);
+    color: var(--lnb-success);
+    border-color: transparent;
+    .dot { background: var(--lnb-success); box-shadow: 0 0 0 3px rgba(31,122,77,0.18); }
+
+    &:hover { filter: brightness(0.96); }
+  }
+}
+
+.toolbar-retiro {
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--lnb-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--lnb-border);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    color: var(--lnb-text-soft);
+  }
+
+  kbd {
+    font-size: 10.5px;
+    background: var(--lnb-surface-2);
+    border: 1px solid var(--lnb-border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    color: var(--lnb-text-soft);
+    font-weight: 600;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--lnb-surface-2);
+    color: var(--lnb-text);
+    mat-icon { color: var(--lnb-text-muted); }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.router-content {
+  padding: 20px 22px;
+  flex: 1;
+  overflow-y: auto;
 }

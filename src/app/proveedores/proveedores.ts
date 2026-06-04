@@ -8,7 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 
-import Swal from 'sweetalert2'; 
+import { NotificationService } from '../../Service/notification-service';
+import { DialogConfirm } from '../dialog/dialog-confirm/dialog-confirm';
 import { ProveedorService } from '../../Service/proveedor-service';
 import { ProveedorDTO } from '../../interfaces/ProveedorDTO';
 import { DialogProveedor } from '../dialog/dialog-proveedor/dialog-proveedor';
@@ -33,7 +34,8 @@ export class Proveedores implements OnInit {
 
   constructor(
     private proveedorService: ProveedorService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private notif: NotificationService,
   ) {}
 
   proveedores: ProveedorDTO[] = [];
@@ -51,7 +53,7 @@ export class Proveedores implements OnInit {
       },
       error: (err) => {
         console.error('Error al cargar proveedores:', err);
-        Swal.fire('Error de Carga', 'No se pudieron obtener los proveedores.', 'error');
+        this.notif.error('No se pudieron obtener los proveedores.');
       }
     });
   }
@@ -85,39 +87,36 @@ export class Proveedores implements OnInit {
 
     obs.subscribe({
       next: () => {
-        this.cargarProveedores(); 
-        Swal.fire(titulo, 'El proveedor se guardó correctamente.', 'success');
+        this.cargarProveedores();
+        this.notif.success(titulo);
       },
       error: (err) => {
         const errorMsg = err.error?.error || 'Ocurrió un error en la operación de guardado.';
-        Swal.fire('Error', errorMsg, 'error');
+        this.notif.error(errorMsg);
       }
     });
   }
   
   eliminarProveedor(id: number, nombre: string): void {
-    Swal.fire({
-      title: `¿Eliminar Proveedor: ${nombre}?`,
-      text: "¡Esta acción no se puede revertir!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.proveedorService.eliminar(id).subscribe({
-          next: () => {
-            this.cargarProveedores();
-            Swal.fire('Eliminado', `El proveedor ${nombre} ha sido eliminado.`, 'success');
-          },
-          error: (err) => {
-            const errorMsg = err.error?.error || 'No se pudo eliminar el proveedor.';
-            Swal.fire('Error', errorMsg, 'error');
-          }
-        });
-      }
+    this.dialog.open(DialogConfirm, {
+      data: {
+        title: `¿Eliminar proveedor ${nombre}?`,
+        message: 'Esta acción no se puede revertir.',
+        confirmText: 'Eliminar',
+        variant: 'danger',
+      },
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.proveedorService.eliminar(id).subscribe({
+        next: () => {
+          this.cargarProveedores();
+          this.notif.success(`Proveedor ${nombre} eliminado`);
+        },
+        error: (err) => {
+          const errorMsg = err.error?.error || 'No se pudo eliminar el proveedor.';
+          this.notif.error(errorMsg);
+        }
+      });
     });
   }
 }
