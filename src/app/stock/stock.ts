@@ -12,6 +12,7 @@ import { ProductoService } from '../../Service/producto-service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../Service/notification-service';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-stock',
@@ -28,29 +29,52 @@ export class Stock implements AfterViewInit {
 
 
   searchControl = new FormControl('');
-  productos: ProductoDTO[] = [];
   productosMostrados: ProductoDTO[] = [];
   productoSeleccionado: ProductoDTO | null = null;
 
-  private bloque = 50;
-  private indice = 0;
+  // Paginación server-side: el catálogo (8000+) ya no se descarga entero.
+  private pageSize = 50;
+  private pagina = 1;
+  private total = 0;
+  private termino = '';
+  cargando = false;
+  private reqId = 0;
 
   private focusTimeout: any = null;
 
   constructor(private productoService: ProductoService, private notif: NotificationService) { }
 
   ngOnInit() {
-    this.productoService.obtenerTodos().subscribe(result => {
-      this.productos = result;
-      this.cargarMas();
-    });
+    this.resetYcargar('');
 
-    this.searchControl.valueChanges.subscribe(term => {
-      const value = term?.toLowerCase() || '';
-      this.productosMostrados = this.productos.filter(
-        p => p.nombre.toLowerCase().includes(value) || p.codigo.toLowerCase().includes(value)
-      );
-      this.indice = this.productosMostrados.length;
+    this.searchControl.valueChanges
+      .pipe(debounceTime(250), distinctUntilChanged())
+      .subscribe(term => this.resetYcargar((term || '').trim()));
+  }
+
+  private resetYcargar(termino: string) {
+    this.termino = termino;
+    this.pagina = 1;
+    this.cargarPagina();
+  }
+
+  // Trae una página del backend. Un reqId descarta respuestas obsoletas
+  // (p.ej. si el usuario sigue tipeando mientras llega una respuesta vieja).
+  private cargarPagina() {
+    const id = ++this.reqId;
+    this.cargando = true;
+    const paginaActual = this.pagina;
+
+    this.productoService.obtenerPaginado(paginaActual, this.pageSize, this.termino).subscribe({
+      next: (res) => {
+        if (id !== this.reqId) return;
+        this.productosMostrados = paginaActual === 1
+          ? res.items
+          : [...this.productosMostrados, ...res.items];
+        this.total = res.total;
+        this.cargando = false;
+      },
+      error: () => { if (id === this.reqId) this.cargando = false; }
     });
   }
 
@@ -69,7 +93,7 @@ export class Stock implements AfterViewInit {
     const el = this.tablaProductosRef.nativeElement;
     const distanciaAlFondo = el.scrollHeight - el.scrollTop - el.clientHeight;
 
-    if (distanciaAlFondo < 200 && this.indice < this.productos.length) {
+    if (distanciaAlFondo < 200) {
       this.cargarMas();
     }
 
@@ -85,29 +109,33 @@ export class Stock implements AfterViewInit {
   }
 
   onBarcodeScanned(code: string) {
-    console.log(`%c📦 CÓDIGO RECIBIDO: "${code}"`, 'background: #222; color: #bada55; font-size: 1.2rem');
-
     const trimmed = code.trim();
-    const producto = this.productos.find(p => p.codigo === trimmed);
+    this.barcodeInput.nativeElement.value = '';
 
-    if (producto) {
-
-      console.error(`❌ El código "${trimmed}" no existe en la base de datos.`);
-      this.productoSeleccionadoParaCarrito.emit({ ...producto });
-      this.productoSeleccionado = producto;
-      this.toastOk(producto);
-    } else {
-      this.toastError(trimmed);
+    if (!trimmed) {
+      this.solicitarFocus("afterScan");
+      return;
     }
 
-    this.barcodeInput.nativeElement.value = '';
-    this.solicitarFocus("afterScan");
+    // Lookup exacto contra la vista en el backend (precio/stock reales de MoviSQL).
+    this.productoService.buscarEnVistaPorCodigo(trimmed).subscribe({
+      next: (producto) => {
+        this.productoSeleccionadoParaCarrito.emit({ ...producto });
+        this.productoSeleccionado = producto;
+        this.toastOk(producto);
+        this.solicitarFocus("afterScan");
+      },
+      error: () => {
+        this.toastError(trimmed);
+        this.solicitarFocus("afterScan");
+      }
+    });
   }
 
   cargarMas() {
-    const lote = this.productos.slice(this.indice, this.indice + this.bloque);
-    this.productosMostrados = [...this.productosMostrados, ...lote];
-    this.indice += this.bloque;
+    if (this.cargando || this.productosMostrados.length >= this.total) return;
+    this.pagina++;
+    this.cargarPagina();
   }
 
   // @HostListener('window:scroll')

@@ -8,6 +8,7 @@ import { Layout } from './layout/layout';
 import { Facturas } from './facturas/facturas';
 import { Productos } from './productos/productos';
 import { AuthGuard } from '../Service/auth.guard';
+import { RoleGuard } from '../Service/role.guard';
 import { ProductosPage } from './productos-page/productos-page';
 import { Login } from './login/login';
 import { HistorialVentas } from './ventas/historial/historial-ventas/historial-ventas';
@@ -32,15 +33,15 @@ export const routes: Routes = [
           { path: 'historial', component: HistorialVentas }
         ]
       },
-      { path: 'dashboard', component: Dashboard },
-      { path: 'reportes', component: Reportes },
+      { path: 'dashboard', component: Dashboard, canActivate: [RoleGuard], data: { roles: ['Administrador'] } },
+      { path: 'reportes', component: Reportes, canActivate: [RoleGuard], data: { roles: ['Administrador'] } },
       { path: 'historialcaja', component: CajaHistorial },
-      { path: 'proveedores', component: Proveedores },
-      { path: 'rubros', component: Rubros },
-      { path: 'facturas', component: Facturas },
-      { path: 'productos', component: ProductosPage },
+      { path: 'proveedores', component: Proveedores, canActivate: [RoleGuard], data: { roles: ['Administrador'] } },
+      { path: 'rubros', component: Rubros, canActivate: [RoleGuard], data: { roles: ['Administrador'] } },
+      { path: 'facturas', component: Facturas, canActivate: [RoleGuard], data: { roles: ['Administrador'] } },
+      { path: 'productos', component: ProductosPage, canActivate: [RoleGuard], data: { roles: ['Administrador'] } },
       { path: 'clientes', component: Clientes },
-      { path: 'condicioniva', component: Condicioniva }
+      { path: 'condicioniva', component: Condicioniva, canActivate: [RoleGuard], data: { roles: ['Administrador'] } }
     ]
   },
 

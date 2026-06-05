@@ -43,6 +43,11 @@ export class ProductoService {
     return this.http.get<ProductoDTO>(`${this.apiUrl}/buscar/${codigo}`);
   }
 
+  // Lookup exacto contra la vista (precio/stock reales). Usado por el escaneo del mostrador.
+  buscarEnVistaPorCodigo(codigo: string): Observable<ProductoDTO> {
+    return this.http.get<ProductoDTO>(`${this.apiUrl}/vista/buscar/${encodeURIComponent(codigo)}`);
+  }
+
   obtenerPaginado(pagina: number, pageSize: number, termino: string = "") {
     return this.http.get<PagedResult<ProductoDTO>>(`${this.apiUrl}/paginado`, {
       params: { pagina, pageSize, termino }

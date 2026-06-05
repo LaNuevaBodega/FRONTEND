@@ -59,8 +59,8 @@ export class ProductosPage implements OnDestroy {
 
             this.notif.success('Producto actualizado');
           },
-          error: () => {
-            this.notif.error('Error al actualizar');
+          error: (err) => {
+            this.notif.error(err?.error?.mensaje || 'Error al actualizar');
           }
         });
 
@@ -111,6 +111,9 @@ export class ProductosPage implements OnDestroy {
 
 
           this.notif.success('Producto creado');
+        },
+        error: (err) => {
+          this.notif.error(err?.error?.mensaje || 'No se pudo crear el producto.');
         }
       });
 
