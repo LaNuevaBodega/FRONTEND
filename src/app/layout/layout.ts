@@ -1,4 +1,4 @@
-import { Component, HostBinding, HostListener, signal } from '@angular/core';
+import { Component, HostBinding, HostListener, OnInit, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -15,6 +15,7 @@ import { DialogAbrirCaja } from '../dialog/dialog-abrir-caja/dialog-abrir-caja';
 import { DialogCerrarCaja } from '../dialog/dialog-cerrar-caja/dialog-cerrar-caja';
 import { DialogRetirarDinero } from '../dialog/dialog-retirar-dinero/dialog-retirar-dinero';
 import { NotificationService } from '../../Service/notification-service';
+import { PermisosService } from '../../Service/permisos-service';
 
 @Component({
   selector: 'app-main-layout',
@@ -34,7 +35,7 @@ import { NotificationService } from '../../Service/notification-service';
   templateUrl: './layout.html',
   styleUrls: ['./layout.scss']
 })
-export class Layout {
+export class Layout implements OnInit {
 
   constructor(
     public authService: AuthService,
@@ -43,7 +44,18 @@ export class Layout {
     private ticketService: TicketService,
     private dialog: MatDialog,
     private notif: NotificationService,
+    private permisosService: PermisosService,
   ) { }
+
+  ngOnInit() {
+    // Carga la configuración de vistas para que el menú respete los permisos.
+    this.permisosService.obtener().subscribe();
+  }
+
+  // El menú consulta esto para mostrar/ocultar secciones de empleados.
+  puedeVer(clave: string): boolean {
+    return this.permisosService.puedeVer(clave);
+  }
 
   get cajaAbierta() { return this.cajaService.cajaActual; }
 

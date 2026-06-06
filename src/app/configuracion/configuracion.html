@@ -1,0 +1,154 @@
+<div class="page">
+
+  <div class="page-header">
+    <h1>Configuración</h1>
+  </div>
+
+  <!-- ============ MI MÁQUINA ============ -->
+  <section class="config-card">
+    <div class="config-card__head">
+      <mat-icon>desktop_windows</mat-icon>
+      <div>
+        <h2>Mi máquina</h2>
+        <p class="config-card__sub">
+          Asignate una máquina para poder abrir caja y vender desde este equipo.
+        </p>
+      </div>
+    </div>
+
+    <div class="mi-maquina">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="mi-maquina__field">
+        <mat-label>Nombre de la máquina</mat-label>
+        <input matInput [(ngModel)]="miMaquina" placeholder="Ej: CAJA-ADMIN" autocomplete="off">
+      </mat-form-field>
+      <button mat-raised-button color="primary"
+              [disabled]="asignandoMaquina"
+              (click)="asignarMiMaquina()">
+        <mat-icon>save</mat-icon>
+        Asignarme
+      </button>
+      <span class="mi-maquina__actual">
+        Actual: <strong>{{ authService.maquinaId }}</strong>
+      </span>
+    </div>
+  </section>
+
+  <!-- ============ CAJEROS ============ -->
+  <section class="config-card">
+    <div class="config-card__head">
+      <mat-icon>badge</mat-icon>
+      <div>
+        <h2>Cajeros</h2>
+        <p class="config-card__sub">Gestioná los usuarios que pueden operar el sistema.</p>
+      </div>
+      <span class="spacer"></span>
+      <button mat-raised-button color="primary" (click)="abrirCrear()">
+        <mat-icon>add</mat-icon>Nuevo cajero
+      </button>
+    </div>
+
+    <div class="spinner-wrapper" *ngIf="cargandoCajeros">
+      <mat-spinner diameter="36"></mat-spinner>
+    </div>
+
+    <div class="tabla-wrapper" *ngIf="!cargandoCajeros">
+      <table mat-table [dataSource]="cajeros" class="mat-elevation-z1">
+
+        <ng-container matColumnDef="usuario">
+          <th mat-header-cell *matHeaderCellDef>Usuario</th>
+          <td mat-cell *matCellDef="let c">{{ c.userName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let c">{{ c.email }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="maquina">
+          <th mat-header-cell *matHeaderCellDef>Máquina</th>
+          <td mat-cell *matCellDef="let c">{{ c.maquinaId || '—' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="rol">
+          <th mat-header-cell *matHeaderCellDef>Rol</th>
+          <td mat-cell *matCellDef="let c">
+            <span class="rol-badge" [class.rol-admin]="c.rol === 'Administrador'">{{ c.rol }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let c">
+            <span class="estado-badge" [class.is-off]="!c.activo">
+              {{ c.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let c" class="acciones-cell">
+            <button mat-icon-button (click)="abrirEditar(c)" matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button *ngIf="c.activo" mat-icon-button color="warn"
+                    (click)="desactivar(c)" matTooltip="Desactivar">
+              <mat-icon>close</mat-icon>
+            </button>
+            <button *ngIf="!c.activo" mat-icon-button color="primary"
+                    (click)="reactivar(c)" matTooltip="Reactivar">
+              <mat-icon>check</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnas; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </table>
+
+      <div *ngIf="cajeros.length === 0" class="empty">No hay cajeros registrados</div>
+    </div>
+  </section>
+
+  <!-- ============ PERMISOS DE EMPLEADOS ============ -->
+  <section class="config-card">
+    <div class="config-card__head">
+      <mat-icon>visibility</mat-icon>
+      <div>
+        <h2>Vistas de empleados</h2>
+        <p class="config-card__sub">
+          Marcá qué secciones pueden ver los empleados (rol Vendedor). El administrador siempre ve todo.
+        </p>
+      </div>
+    </div>
+
+    <div class="spinner-wrapper" *ngIf="cargandoPermisos">
+      <mat-spinner diameter="36"></mat-spinner>
+    </div>
+
+    <div class="permisos" *ngIf="!cargandoPermisos">
+      <div class="permiso-row" *ngFor="let p of permisos"
+           (click)="p.habilitado = !p.habilitado"
+           role="switch" [attr.aria-checked]="p.habilitado" tabindex="0"
+           (keydown.enter)="p.habilitado = !p.habilitado"
+           (keydown.space)="p.habilitado = !p.habilitado; $event.preventDefault()">
+        <span class="permiso-row__label">{{ p.etiqueta }}</span>
+        <span class="spacer"></span>
+        <span class="permiso-row__state" [class.is-on]="p.habilitado">
+          {{ p.habilitado ? 'ON' : 'OFF' }}
+        </span>
+        <span class="switch" [class.is-on]="p.habilitado" aria-hidden="true"></span>
+      </div>
+
+      <div class="permisos__footer">
+        <button mat-raised-button color="primary"
+                [disabled]="guardandoPermisos"
+                (click)="guardarPermisos()">
+          <mat-icon>save</mat-icon>
+          Guardar permisos
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>

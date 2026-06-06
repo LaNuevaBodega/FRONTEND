@@ -262,6 +262,20 @@ export class Reportes implements OnInit {
     });
   }
 
+  // Formato compacto para etiquetas con poco espacio (centro del donut, barras):
+  // $ 9,8 M / $ 950 k / $ 750. Evita que montos grandes desborden el espacio.
+  compacto(n: number): string {
+    const v = n ?? 0;
+    const abs = Math.abs(v);
+    if (abs >= 1_000_000) {
+      return '$ ' + (v / 1_000_000).toLocaleString('es-AR', { maximumFractionDigits: 2 }) + ' M';
+    }
+    if (abs >= 10_000) {
+      return '$ ' + (v / 1_000).toLocaleString('es-AR', { maximumFractionDigits: 0 }) + ' k';
+    }
+    return '$ ' + v.toLocaleString('es-AR', { maximumFractionDigits: 0 });
+  }
+
   cantidad(n: number): string {
     return (n ?? 0).toLocaleString('es-AR', {
       minimumFractionDigits: 0,

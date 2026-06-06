@@ -1,68 +1,203 @@
 :host {
+  --lnb-burgundy:        #7b1a1f;
+  --lnb-burgundy-dark:   #5d1318;
+  --lnb-burgundy-light:  #a23139;
+
   display: block;
   min-height: 100vh;
-  background: #eeeeee;
   font-family: 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
+/* Fondo con degradado suave */
 .login-root {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(1200px 600px at 100% 0%, #fbeaeb 0%, transparent 55%),
+    radial-gradient(900px 500px at 0% 100%, #f3f1ee 0%, transparent 60%),
+    #eef0f3;
 }
 
+/* Tarjeta de dos paneles */
 .login-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   width: 100%;
-  max-width: 380px;
-  padding: 32px 28px;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  min-height: 540px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 24px 60px rgba(31, 38, 59, 0.18);
 }
 
-.logo {
+/* ── Panel de marca (izquierda) ── */
+.brand-panel {
+  position: relative;
   display: flex;
-  justify-content: center;  
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background:
+    linear-gradient(150deg, var(--lnb-burgundy-light) 0%, var(--lnb-burgundy) 45%, var(--lnb-burgundy-dark) 100%);
+  overflow: hidden;
+}
+
+/* Textura decorativa sutil */
+.brand-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(420px 420px at 80% 15%, rgba(255, 255, 255, 0.14), transparent 60%),
+    radial-gradient(360px 360px at 10% 90%, rgba(0, 0, 0, 0.18), transparent 60%);
+  pointer-events: none;
+}
+
+.brand-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #fff;
+}
+
+.logo-badge {
+  width: 168px;
+  height: 168px;
+  margin: 0 auto 26px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+
   img {
-    height: 200px;
+    width: 78%;
+    height: 78%;
     object-fit: contain;
   }
 }
 
+.brand-title {
+  margin: 0 0 8px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: #fff;
+}
+
+.brand-tagline {
+  margin: 0 auto;
+  max-width: 260px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ── Panel de formulario (derecha) ── */
+.form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 44px;
+}
+
+.form-wrap {
+  width: 100%;
+  max-width: 340px;
+}
+
 h2 {
-  text-align: center;
-  margin: 8px 0 4px;
-  font-size: 22px;
-  font-weight: 600;
+  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 700;
   color: #1f2937;
 }
 
 .subtitle {
-  text-align: center;
+  margin: 0 0 28px;
   font-size: 14px;
   color: #6b7280;
-  margin-bottom: 24px;
 }
 
 .field {
   width: 100%;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
+
+  mat-icon[matPrefix] {
+    margin-right: 8px;
+    color: #9ca3af;
+  }
 }
 
 ::ng-deep .mat-mdc-text-field-wrapper {
-  border-radius: 8px;
+  border-radius: 10px;
+}
+
+/* Mensajes de validación en rojo y legibles */
+::ng-deep .field {
+  .mat-mdc-form-field-error,
+  .mat-mdc-form-field-subscript-wrapper .mat-mdc-form-field-error {
+    color: #d32f2f;
+    font-size: 12.5px;
+    font-weight: 500;
+  }
+
+  /* Borde y label en rojo cuando el campo es inválido */
+  &.mat-form-field-invalid .mdc-notched-outline__leading,
+  &.mat-form-field-invalid .mdc-notched-outline__notch,
+  &.mat-form-field-invalid .mdc-notched-outline__trailing {
+    border-color: #d32f2f;
+  }
 }
 
 .login-btn {
   width: 100%;
-  height: 44px;
-  margin-top: 10px;
+  height: 48px;
+  margin-top: 16px;
   font-size: 15px;
-  font-weight: 500;
-  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(123, 26, 31, 0.28);
+
+  mat-icon {
+    margin-right: 6px;
+    vertical-align: middle;
+  }
 }
 
 .login-btn:disabled {
-  background-color: #9ca3af !important;
+  background-color: #cbd0d6 !important;
   color: #f9fafb !important;
+  box-shadow: none;
+}
+
+/* ── Responsive ── */
+@media (max-width: 760px) {
+  .login-card {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+    min-height: 0;
+  }
+
+  .brand-panel {
+    padding: 32px 24px;
+  }
+
+  .logo-badge {
+    width: 110px;
+    height: 110px;
+    margin-bottom: 16px;
+  }
+
+  .brand-title { font-size: 22px; }
+  .brand-tagline { display: none; }
+
+  .form-panel {
+    padding: 32px 28px 40px;
+  }
 }

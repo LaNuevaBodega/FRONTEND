@@ -1,31 +1,58 @@
 <div class="detalle-container" *ngIf="producto; else sinSeleccion">
 
-  <h3>{{ producto.nombre }}</h3>
+  <div class="detalle-card">
+    <header class="detalle-header">
+      <div class="avatar">{{ (producto.nombre || '?').charAt(0) }}</div>
+      <h3>{{ producto.nombre }}</h3>
+    </header>
 
-  <p><strong>Código:</strong> {{ producto.codigo }}</p>
-  <p><strong>Precio:</strong> ${{ producto.precioVenta }}</p>
-  <p><strong>Proveedor:</strong> {{ producto.proveedorNombre }}</p>
-  <p><strong>Rubro:</strong> {{ producto.rubroNombre }}</p>
-  <p><strong>Stock:</strong> {{producto.existencia ?? 0}}</p>
+    <dl class="detalle-info">
+      <div class="info-row">
+        <dt>Código</dt>
+        <dd>{{ producto.codigo }}</dd>
+      </div>
+      <div class="info-row">
+        <dt>Precio</dt>
+        <dd class="precio">${{ producto.precioVenta }}</dd>
+      </div>
+      <div class="info-row">
+        <dt>Proveedor</dt>
+        <dd>{{ producto.proveedorNombre || '—' }}</dd>
+      </div>
+      <div class="info-row">
+        <dt>Rubro</dt>
+        <dd>{{ producto.rubroNombre || '—' }}</dd>
+      </div>
+      <div class="info-row">
+        <dt>Stock</dt>
+        <dd>
+          <span class="stock-badge" [class.cero]="(producto.existencia ?? 0) <= 0">
+            {{ producto.existencia ?? 0 }}
+          </span>
+        </dd>
+      </div>
+    </dl>
 
-  <div class="acciones">
-    <button mat-raised-button color="primary" (click)="onEditar()">
-      <mat-icon>edit</mat-icon> Editar
-    </button>
+    <div class="acciones">
+      <button mat-flat-button class="btn-editar" (click)="onEditar()">
+        <mat-icon>edit</mat-icon> Editar
+      </button>
 
-    <button mat-raised-button color="accent" (click)="onAjustarStock()">
-      <mat-icon>inventory</mat-icon> Ajustar Stock
-    </button>
+      <button mat-stroked-button class="btn-stock" (click)="onAjustarStock()">
+        <mat-icon>inventory_2</mat-icon> Ajustar stock
+      </button>
 
-    <button mat-raised-button color="warn" (click)="onEliminar()">
-      <mat-icon>delete</mat-icon> Eliminar
-    </button>
+      <button mat-stroked-button class="btn-eliminar" (click)="onEliminar()">
+        <mat-icon>delete_outline</mat-icon> Eliminar
+      </button>
+    </div>
   </div>
 
 </div>
 
 <ng-template #sinSeleccion>
   <div class="no-selection">
-    Seleccioná un producto.
+    <mat-icon>inventory_2</mat-icon>
+    <span>Seleccioná un producto.</span>
   </div>
 </ng-template>

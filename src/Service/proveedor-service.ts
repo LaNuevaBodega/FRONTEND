@@ -16,7 +16,12 @@ export class ProveedorService {
   constructor(private http:HttpClient){}
 
   obtenerTodos(): Observable<ProveedorDTO[]> {
-    return this.http.get<ProveedorDTO[]>(`${this.apiUrl}`);    
+    return this.http.get<ProveedorDTO[]>(`${this.apiUrl}`);
+  }
+
+  // Proveedores reales de Movi (los que usa el ABM de productos).
+  obtenerMovi(): Observable<ProveedorDTO[]> {
+    return this.http.get<ProveedorDTO[]>(`${this.apiUrl}/movi`);
   }
 
   obtenerPorId(id:number):Observable<ProveedorDTO>{

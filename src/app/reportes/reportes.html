@@ -67,8 +67,8 @@
                       [attr.stroke-dasharray]="m.dash + ' ' + (circunferencia - m.dash)"
                       [attr.stroke-dashoffset]="m.offset"></circle>
             </g>
-            <text x="100" y="94" text-anchor="middle" class="torta__total">{{ money(totalDia) }}</text>
-            <text x="100" y="114" text-anchor="middle" class="torta__caption">total</text>
+            <text x="100" y="96" text-anchor="middle" class="torta__total">{{ compacto(totalDia) }}</text>
+            <text x="100" y="116" text-anchor="middle" class="torta__caption">total</text>
           </svg>
           <ng-template #sinTorta>
             <div class="vacio vacio--torta">
@@ -133,7 +133,7 @@
     <div class="grafico grafico--dias" *ngIf="dias.length; else sinDias">
       <div class="barra" *ngFor="let d of dias" [class.barra--max]="d.esMax"
            [attr.title]="d.etiqueta + ' — ' + money(d.total) + ' (' + d.cantidad + ' ventas)'">
-        <div class="barra__valor">{{ d.total > 0 ? money(d.total) : '' }}</div>
+        <div class="barra__valor">{{ d.total > 0 ? compacto(d.total) : '' }}</div>
         <div class="barra__col">
           <div class="barra__fill" [style.height.%]="d.altura"></div>
         </div>
@@ -171,7 +171,7 @@
         <div class="barra" *ngFor="let h of horas"
              [class.barra--max]="h.esMax" [class.barra--min]="h.esMin"
              [attr.title]="h.etiqueta + ' — ' + money(h.total) + ' (' + h.cantidad + ' ventas)'">
-          <div class="barra__valor">{{ h.total > 0 ? money(h.total) : '' }}</div>
+          <div class="barra__valor">{{ h.total > 0 ? compacto(h.total) : '' }}</div>
           <div class="barra__col">
             <div class="barra__fill" [style.height.%]="h.altura"></div>
           </div>

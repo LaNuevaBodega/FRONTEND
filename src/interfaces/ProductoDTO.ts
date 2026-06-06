@@ -5,6 +5,7 @@ export interface ProductoDTO {
   precioVenta: number;
   precioCosto: number;
   existencia?: number;
+  proveedorCod?: number;
   proveedorNombre?: string;
   rubroNombre?: string;
   esVendible: boolean;

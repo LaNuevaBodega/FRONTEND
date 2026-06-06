@@ -55,7 +55,8 @@ export class DialogProducto implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const idRubroInicial = (this.data as any)?.idRubro || 0;
-    const idProveedorInicial = (this.data as any)?.idProveedor || 0;
+    // El proveedor del producto viene de Movi como ProveedorCod (no como id local).
+    const idProveedorInicial = this.data?.proveedorCod || 0;
 
     this.productoForm = this.fb.group({
       codigo: [this.data?.codigo || '', Validators.required],
@@ -87,18 +88,26 @@ export class DialogProducto implements OnInit, OnDestroy {
     this.rubroService.obtenerTodos().subscribe(rubros => {
       this.rubrosList = rubros;
       this.rubrosFiltrados.next(rubros.slice());
-      const rubroSeleccionado = rubros.find(r => r.nombre === this.data?.rubroNombre);
+      const rubroSeleccionado = rubros.find(r => this.coincideNombre(r.nombre, this.data?.rubroNombre));
       if (rubroSeleccionado) {
         this.productoForm.patchValue({ idRubro: rubroSeleccionado.id });
       }
     });
 
-    this.proveedorService.obtenerTodos().subscribe(proveedores => {
+    // Proveedores reales de Movi: el id de cada uno es el ProveedorCod que se
+    // guarda en Stock. Así el proveedor del producto aparece preseleccionado.
+    this.proveedorService.obtenerMovi().subscribe(proveedores => {
       this.proveedoresList = proveedores;
       this.proveedoresFiltrados.next(proveedores.slice());
-      const proveedorSeleccionado = proveedores.find(p => p.nombre === this.data?.proveedorNombre);
-      if (proveedorSeleccionado) {
-        this.productoForm.patchValue({ idProveedor: proveedorSeleccionado.id });
+
+      // Preselección por código de Movi; si no vino el código, intentamos por nombre.
+      if (this.data?.proveedorCod) {
+        this.productoForm.patchValue({ idProveedor: this.data.proveedorCod });
+      } else {
+        const proveedorSeleccionado = proveedores.find(p => this.coincideNombre(p.nombre, this.data?.proveedorNombre));
+        if (proveedorSeleccionado) {
+          this.productoForm.patchValue({ idProveedor: proveedorSeleccionado.id });
+        }
       }
     });
 
@@ -114,6 +123,16 @@ export class DialogProducto implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._onDestroy.next();
     this._onDestroy.complete();
+  }
+
+  /**
+   * Compara dos nombres ignorando mayúsculas/minúsculas y espacios sobrantes.
+   * Necesario porque los productos vienen de MoviSQL y los proveedores/rubros
+   * de la base primaria, donde el mismo nombre puede diferir en formato.
+   */
+  private coincideNombre(a?: string | null, b?: string | null): boolean {
+    if (!a || !b) return false;
+    return a.trim().toLowerCase() === b.trim().toLowerCase();
   }
 
   private filtrarRubros(): void {

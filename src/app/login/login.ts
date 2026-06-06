@@ -30,6 +30,7 @@ export class Login implements OnInit {
 
   loginForm!: FormGroup;
   submitting = false;
+  showPassword = false;
 
   constructor(
     private fb: FormBuilder,

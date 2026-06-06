@@ -65,17 +65,20 @@
         </mat-form-field>
 
 
-        <mat-checkbox formControlName="esVendible">
-            Es Vendible (figura en la caja)
-        </mat-checkbox>
+        <div class="opciones">
+            <span class="opciones-titulo">Opciones</span>
+            <mat-checkbox formControlName="esVendible">
+                Es Vendible <small>(figura en la caja)</small>
+            </mat-checkbox>
 
-        <mat-checkbox formControlName="esElaborado">
-            Es Elaborado (producto preparado en local)
-        </mat-checkbox>
+            <mat-checkbox formControlName="esElaborado">
+                Es Elaborado <small>(producto preparado en local)</small>
+            </mat-checkbox>
 
-        <mat-checkbox formControlName="esAGranel">
-            Es A Granel (se pesa en balanza Systel)
-        </mat-checkbox>
+            <mat-checkbox formControlName="esAGranel">
+                Es A Granel <small>(se pesa en balanza Systel)</small>
+            </mat-checkbox>
+        </div>
 
         <mat-form-field *ngIf="productoForm.get('esAGranel')?.value" appearance="outline" class="full-width">
             <mat-label>Código PLU (balanza)</mat-label>

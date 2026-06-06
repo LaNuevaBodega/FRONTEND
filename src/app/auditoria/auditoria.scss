@@ -1,0 +1,285 @@
+.page {
+    padding: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ---- Encabezado ---- */
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.page-header__icon {
+    flex: 0 0 auto;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #a23139, var(--lnb-primary));
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(123, 26, 31, 0.25);
+
+    mat-icon {
+        font-size: 26px;
+        width: 26px;
+        height: 26px;
+    }
+}
+
+.page-title {
+    margin: 0;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #2a2a2a;
+    line-height: 1.2;
+}
+
+.page-subtitle {
+    margin: 2px 0 0;
+    font-size: 0.85rem;
+    color: #8a8a8a;
+}
+
+/* ---- Tarjetas ---- */
+.card {
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.filtros-card {
+    padding: 1.25rem 1.25rem 0.25rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ---- Filtros ---- */
+.filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    align-items: flex-start;
+
+    .campo {
+        width: 170px;
+    }
+
+    .campo--usuario {
+        width: 210px;
+    }
+}
+
+.filtros__acciones {
+    display: flex;
+    gap: 0.5rem;
+    /* Alinea los botones con la caja del input (los campos outline reservan
+       ~22px abajo para el subscript). */
+    margin-top: 4px;
+
+    button {
+        height: 48px;
+        border-radius: 10px;
+        font-weight: 600;
+
+        mat-icon {
+            font-size: 19px;
+            width: 19px;
+            height: 19px;
+            margin-right: 2px;
+        }
+    }
+}
+
+/* ---- Tabla ---- */
+.tabla-card {
+    overflow: hidden;
+    padding: 0.25rem 0.25rem 0;
+}
+
+.tabla-wrapper {
+    overflow-x: auto;
+}
+
+table[mat-table] {
+    width: 100%;
+    background: transparent;
+}
+
+th.mat-mdc-header-cell {
+    background: #faf7f7;
+    color: #6a4d4f;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #efe6e6;
+}
+
+td.mat-mdc-cell {
+    color: #3a3a3a;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f3f3f3;
+}
+
+.fila-datos {
+    transition: background 0.15s ease;
+
+    &:hover {
+        background: #fbfafa;
+    }
+
+    &.expandida {
+        background: var(--lnb-primary-soft);
+    }
+}
+
+.usuario-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.avatar {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--lnb-primary-soft);
+    color: var(--lnb-primary);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.id-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: #f1f1f1;
+    color: #555;
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+}
+
+button.abierto mat-icon {
+    color: var(--lnb-primary);
+}
+
+/* ---- Badges de acción ---- */
+.badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+
+    &--alta {
+        background: #e7f4e8;
+        color: #2e7d32;
+    }
+
+    &--baja {
+        background: #fdeaea;
+        color: #c62828;
+    }
+
+    &--mod {
+        background: #e8f0fb;
+        color: #1565c0;
+    }
+}
+
+/* ---- Detalle expandible ---- */
+.fila-detalle.oculta {
+    display: none;
+}
+
+.fila-detalle td {
+    padding: 0 !important;
+    border-bottom: 1px solid #f3f3f3;
+}
+
+.detalle {
+    padding: 1rem 1.25rem 1.25rem;
+    background: #fbfafa;
+}
+
+table.diff {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    overflow: hidden;
+
+    th,
+    td {
+        text-align: left;
+        padding: 8px 14px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    thead th {
+        background: #f6f6f6;
+        font-weight: 700;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: #777;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .diff__campo {
+        font-weight: 600;
+        white-space: nowrap;
+        color: #333;
+    }
+
+    .diff__antes {
+        color: #b71c1c;
+    }
+
+    .diff__despues {
+        color: #1b5e20;
+    }
+}
+
+/* ---- Paginador ---- */
+mat-paginator {
+    background: transparent;
+    border-top: 1px solid #f3f3f3;
+}
+
+/* ---- Vacío ---- */
+.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    color: #9a9a9a;
+
+    mat-icon {
+        font-size: 42px;
+        width: 42px;
+        height: 42px;
+        color: #cfcfcf;
+    }
+
+    p {
+        margin: 0;
+        font-size: 0.95rem;
+    }
+}

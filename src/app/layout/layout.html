@@ -12,12 +12,12 @@
 
         <nav class="nav">
 
-            <a class="nav__item" routerLink="/app/ventas" routerLinkActive="is-active">
+            <a class="nav__item" routerLink="/app/ventas" routerLinkActive="is-active" *ngIf="puedeVer('ventas')">
                 <mat-icon>point_of_sale</mat-icon>
                 <span>Mostrador</span>
             </a>
 
-            <a class="nav__item" routerLink="/app/ventas/historial" routerLinkActive="is-active">
+            <a class="nav__item" routerLink="/app/ventas/historial" routerLinkActive="is-active" *ngIf="puedeVer('historial')">
                 <mat-icon>receipt_long</mat-icon>
                 <span>Historial de ventas</span>
             </a>
@@ -27,7 +27,7 @@
                 <span>Reportes</span>
             </a>
 
-            <a class="nav__item" routerLink="/app/historialcaja" routerLinkActive="is-active">
+            <a class="nav__item" routerLink="/app/historialcaja" routerLinkActive="is-active" *ngIf="puedeVer('caja')">
                 <mat-icon>payments</mat-icon>
                 <span>Caja</span>
             </a>
@@ -49,9 +49,9 @@
                 <span>Rubros</span>
             </a>
 
-            <div class="nav__sep">Clientes</div>
+            <div class="nav__sep" *ngIf="authService.isAdmin || puedeVer('clientes')">Clientes</div>
 
-            <a class="nav__item" routerLink="/app/clientes" routerLinkActive="is-active">
+            <a class="nav__item" routerLink="/app/clientes" routerLinkActive="is-active" *ngIf="puedeVer('clientes')">
                 <mat-icon>groups</mat-icon>
                 <span>Clientes</span>
             </a>
@@ -59,6 +59,18 @@
             <a class="nav__item" routerLink="/app/condicioniva" routerLinkActive="is-active" *ngIf="authService.isAdmin">
                 <mat-icon>request_quote</mat-icon>
                 <span>Condición IVA</span>
+            </a>
+
+            <div class="nav__sep" *ngIf="authService.isAdmin">Sistema</div>
+
+            <a class="nav__item" routerLink="/app/configuracion" routerLinkActive="is-active" *ngIf="authService.isAdmin">
+                <mat-icon>settings</mat-icon>
+                <span>Configuración</span>
+            </a>
+
+            <a class="nav__item" routerLink="/app/auditoria" routerLinkActive="is-active" *ngIf="authService.isAdmin">
+                <mat-icon>history</mat-icon>
+                <span>Auditoría</span>
             </a>
         </nav>
 

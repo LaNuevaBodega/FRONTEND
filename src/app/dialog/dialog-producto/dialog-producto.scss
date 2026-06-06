@@ -1,78 +1,125 @@
 /**
- * Estilos para el diálogo de creación/edición de productos.
- * Incluye el centrado del título y una grilla responsive para el formulario.
+ * Estilos del diálogo de creación/edición de productos.
+ * Paleta burgundy de la marca, grilla responsive y validaciones en rojo.
  */
 
+:host {
+  --lnb-primary: #7b1a1f;
+}
+
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 20px 24px 16px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1f2937;
+  border-bottom: 1px solid #ececf0;
+
+  // Barra de acento burgundy a la izquierda del título
+  &::before {
+    content: '';
+    width: 4px;
+    height: 22px;
+    border-radius: 4px;
+    background: var(--lnb-primary);
+  }
+}
+
 .producto-dialog-container {
-    padding: 16px;
-    min-width: 300px;
-    max-width: 700px; // Aumentamos el ancho máximo para acomodar la grilla de 2 columnas
+  min-width: 320px;
+  max-width: 640px;
+}
 
-    // Estilo para el título del diálogo (mat-dialog-title) - Centrado
-    h2[mat-dialog-title] {
-        color: #3f51b5;
-        border-bottom: 2px solid #e0e0e0;
-        padding-bottom: 15px;
-        font-weight: 600;
-        font-size: 1.5rem; 
-        
-        display: block;
-        width: fit-content; 
-        margin: 0 auto 15px auto; // Centrado horizontal
-        text-align: center; 
+div.producto-dialog-container[mat-dialog-content] {
+  padding: 22px 24px 8px;
+  overflow: visible;
+}
+
+.grid-form {
+  display: grid;
+  gap: 18px 16px;
+  grid-template-columns: 1fr;
+
+  @media (min-width: 500px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  mat-form-field.full-width {
+    width: 100%;
+    margin-top: 0;
+  }
+}
+
+/* Validaciones en rojo y legibles */
+::ng-deep .grid-form {
+  .mat-mdc-form-field-error {
+    color: #d32f2f;
+    font-weight: 500;
+  }
+
+  .mat-form-field-invalid .mdc-notched-outline__leading,
+  .mat-form-field-invalid .mdc-notched-outline__notch,
+  .mat-form-field-invalid .mdc-notched-outline__trailing {
+    border-color: #d32f2f;
+  }
+}
+
+/* Sección de opciones (checkboxes) */
+.opciones {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  border: 1px solid #ececf0;
+  border-radius: 12px;
+  background: #fafafb;
+
+  .opciones-titulo {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #8a93a0;
+    margin-bottom: 4px;
+  }
+
+  mat-checkbox {
+    font-size: 14px;
+  }
+
+  small {
+    color: #8a93a0;
+  }
+}
+
+/* Acciones */
+.producto-dialog-container[mat-dialog-actions] {
+  padding: 16px 24px 20px;
+  border-top: 1px solid #ececf0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  button {
+    min-width: 110px;
+    font-weight: 600;
+  }
+
+  button[mat-dialog-close="false"] {
+    color: #6b7280;
+  }
+
+  button[color="primary"] {
+    box-shadow: 0 6px 16px rgba(123, 26, 31, 0.26);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 9px 22px rgba(123, 26, 31, 0.32);
     }
-
-    // Estilo para el contenido del diálogo (mat-dialog-content)
-    mat-dialog-content {
-        padding: 0 0 20px 0;
-        overflow: visible;
-    }
-
-    // --- Estilos para la GRIDAD RESPONSIVE (grid-form) ---
-    .grid-form {
-        display: grid;
-        gap: 20px 16px; // Espacio vertical y horizontal entre campos
-        
-        // Configuración por defecto (Mobile/Small Screens): 1 columna
-        grid-template-columns: 1fr; 
-
-        // Media Query para Tablets y Desktop: 2 columnas
-        @media (min-width: 500px) { 
-            grid-template-columns: 1fr 1fr;
-        }
-
-        // Aseguramos que los campos ocupen el ancho completo dentro de su celda
-        mat-form-field.full-width {
-            width: 100%;
-            margin-top: 0; // Eliminamos el margen superior ya que el 'gap' lo reemplaza
-        }
-    }
-
-    // Estilos para las acciones (botones) - Alineados a la Derecha
-    mat-dialog-actions {
-        padding-top: 20px;
-        border-top: 1px solid #f0f0f0;
-        display: flex;
-        justify-content: flex-end; 
-        
-        button {
-            margin-left: 8px;
-            min-width: 100px;
-        }
-
-        // Estilo del botón principal
-        button[color="primary"] {
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
-            
-            &:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 5px 8px -1px rgba(0,0,0,.2), 0 8px 12px 0 rgba(0,0,0,.14), 0 3px 20px 0 rgba(0,0,0,.12);
-            }
-        }
-
-        button[mat-dialog-close="false"] {
-            color: #757575;
-        }
-    }
+  }
 }

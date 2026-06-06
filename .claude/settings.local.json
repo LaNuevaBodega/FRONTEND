@@ -13,12 +13,14 @@
       "Bash(Get-Content \"d:\\\\LANUEVABODEGA\\\\distribuidora\\\\src\\\\app\\\\dialog\\\\dialog-producto\\\\dialog-producto.ts\")",
       "Bash(npx ng *)",
       "Bash(git -C \"d:/LANUEVABODEGA/distribuidora\" log --oneline -20 -- \"src/app/ventas/historial/historial-ventas/\")",
-      "Bash(git -C \"d:/LANUEVABODEGA/distribuidora\" diff HEAD -- \"src/app/ventas/historial/historial-ventas/\" \"src/styles.scss\")"
+      "Bash(git -C \"d:/LANUEVABODEGA/distribuidora\" diff HEAD -- \"src/app/ventas/historial/historial-ventas/\" \"src/styles.scss\")",
+      "Bash(npm run *)"
     ],
     "additionalDirectories": [
       "d:\\LANUEVABODEGA\\bodegaback\\Controllers",
       "d:\\LANUEVABODEGA\\bodegaback\\Modelos\\DTO\\CajaDTO",
-      "d:\\LANUEVABODEGA\\bodegaback\\Servicios"
+      "d:\\LANUEVABODEGA\\bodegaback\\Servicios",
+      "d:\\LANUEVABODEGA\\bodegaback\\Modelos\\DTO\\ProductoDTO"
     ]
   }
 }

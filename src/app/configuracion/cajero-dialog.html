@@ -1,0 +1,49 @@
+<h2 mat-dialog-title>{{ esEdicion ? 'Editar cajero' : 'Nuevo cajero' }}</h2>
+
+<mat-dialog-content [formGroup]="form" class="dialog-content">
+
+  <ng-container *ngIf="esEdicion">
+    <div class="cajero-info">
+      <span class="cajero-info__name">{{ data.cajero?.userName }}</span>
+      <span class="cajero-info__email">{{ data.cajero?.email }}</span>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!esEdicion">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Usuario</mat-label>
+      <input matInput formControlName="userName" autocomplete="off">
+      <mat-error>Requerido</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" autocomplete="off">
+      <mat-error *ngIf="form.get('email')?.hasError('required')">Requerido</mat-error>
+      <mat-error *ngIf="form.get('email')?.hasError('email')">Email inválido</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Contraseña</mat-label>
+      <input matInput formControlName="password" type="password" autocomplete="new-password">
+      <mat-error>Mínimo 6 caracteres</mat-error>
+    </mat-form-field>
+  </ng-container>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Máquina</mat-label>
+    <input matInput formControlName="maquinaId" placeholder="Ej: CAJA-01" autocomplete="off">
+  </mat-form-field>
+
+  <mat-slide-toggle *ngIf="esEdicion" formControlName="activo" class="activo-toggle">
+    Usuario activo
+  </mat-slide-toggle>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="form.invalid">
+    {{ esEdicion ? 'Guardar cambios' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

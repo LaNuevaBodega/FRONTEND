@@ -60,6 +60,11 @@ export class AuthService {
     localStorage.removeItem(this.tokenKey);
   }
 
+  // Reemplaza el token vigente (p. ej. tras autoasignarse una máquina).
+  setToken(token: string) {
+    localStorage.setItem(this.tokenKey, token);
+  }
+
   // 🔑 TOKEN
   get token(): string | null {
     return localStorage.getItem(this.tokenKey);

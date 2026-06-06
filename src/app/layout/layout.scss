@@ -183,6 +183,10 @@ $sidenav-width: 252px;
   display: flex;
   flex-direction: column;
   background: var(--lnb-bg);
+  // El scroll vive en .router-content; min-width:0 evita que el contenido
+  // empuje el ancho y genere una barra horizontal en todo el shell.
+  overflow: hidden;
+  min-width: 0;
 }
 
 .app-toolbar {
