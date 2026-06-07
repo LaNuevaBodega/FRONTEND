@@ -35,4 +35,9 @@ export class FacturaService {
   solicitar(dto: SolicitarFacturaDTO): Observable<FacturaResponseDTO> {
     return this.http.post<FacturaResponseDTO>(this.apiUrl, dto);
   }
+
+  // Recupera la factura ya emitida de una venta (404 si no fue facturada).
+  obtenerPorVenta(ventaId: number): Observable<FacturaResponseDTO> {
+    return this.http.get<FacturaResponseDTO>(`${this.apiUrl}/venta/${ventaId}`);
+  }
 }

@@ -7,6 +7,8 @@ import { UsuariosService } from '../../../../Service/usuarios-service';
 import { CajaService } from '../../../../Service/caja-service';
 import { AuthService } from '../../../../Service/auth-service';
 import { TicketService } from '../../../../Service/ticket-service';
+import { TicketServiceArca } from '../../../../Service/ticket-service-arca';
+import { FacturaService } from '../../../../Service/factura-service';
 
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -75,6 +77,8 @@ export class HistorialVentas implements OnInit {
     private cajaService: CajaService,
     private authService: AuthService,
     private ticketService: TicketService,
+    private ticketServiceArca: TicketServiceArca,
+    private facturaService: FacturaService,
     private metodoPagoService: MetodoDePagoService
   ) { }
 
@@ -138,8 +142,24 @@ export class HistorialVentas implements OnInit {
   reimprimir(id: number) {
     this.ventasService.obtenerVentaParaTicket(id).subscribe({
       next: venta => {
-        const html = this.ticketService.generarHtmlVenta(venta);
-        this.ticketService.imprimir(html);
+        // Si la venta se facturó con ARCA, recuperamos la factura emitida y
+        // reimprimimos el ticket fiscal (CAE + QR). Si no, el ticket común.
+        if (venta.tieneFactura) {
+          this.facturaService.obtenerPorVenta(id).subscribe({
+            next: async factura => {
+              const html = await this.ticketServiceArca.generarHtmlFactura(factura, venta);
+              this.ticketServiceArca.imprimir(html);
+            },
+            error: () => {
+              // Fallback defensivo: la factura existe pero no se pudo recuperar.
+              const html = this.ticketService.generarHtmlVenta(venta);
+              this.ticketService.imprimir(html);
+            }
+          });
+        } else {
+          const html = this.ticketService.generarHtmlVenta(venta);
+          this.ticketService.imprimir(html);
+        }
       }
     });
   }
