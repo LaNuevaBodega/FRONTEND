@@ -1,34 +1,33 @@
 <div class="carrito-container">
-  <!-- <h3>Carrito</h3> -->
 
   <div class="tabla-carrito-wrapper">
     <table *ngIf="carrito.length > 0">
       <thead>
         <tr>
-          <th>Producto</th>
-          <th>Código</th>
-          <th>Precio</th>
-          <th>Cantidad</th>
-          <th>Subtotal</th>
-          <th>Accion</th>
-          <th></th>
+          <th class="col-prod">Producto</th>
+          <th class="col-precio">Precio</th>
+          <th class="col-cant">Cant.</th>
+          <th class="col-sub">Subtotal</th>
+          <th class="col-acc"></th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let item of carrito">
-          <td>{{item.producto.nombre}}</td>
-          <td>{{item.producto.codigo}}</td>
-          <td>${{ item.producto.precioVenta | number:'1.2-2' }}</td>
-          <td>
-            <button (click)="disminuirCantidad(item)">-</button>
-            {{item.cantidad}}
-            <button (click)="aumentarCantidad(item)">+</button>
+          <td class="col-prod">
+            <div class="nombre" [title]="item.producto.nombre">{{item.producto.nombre}}</div>
+            <div class="codigo">{{item.producto.codigo}}</div>
           </td>
-          <td>
-            ${{ (item.producto.precioVenta * item.cantidad) | number:'1.2-2' }}
+          <td class="col-precio">${{ item.producto.precioVenta | number:'1.2-2' }}</td>
+          <td class="col-cant">
+            <div class="stepper">
+              <button (click)="disminuirCantidad(item)" aria-label="Disminuir">−</button>
+              <span>{{item.cantidad}}</span>
+              <button (click)="aumentarCantidad(item)" aria-label="Aumentar">+</button>
+            </div>
           </td>
-          <td>
-            <button (click)="eliminarProducto(item)">X</button>
+          <td class="col-sub">${{ (item.producto.precioVenta * item.cantidad) | number:'1.2-2' }}</td>
+          <td class="col-acc">
+            <button class="btn-eliminar" (click)="eliminarProducto(item)" aria-label="Quitar">×</button>
           </td>
         </tr>
       </tbody>

@@ -1,0 +1,47 @@
+<div class="cobro-posnet">
+  <h2 class="titulo">
+    <mat-icon>{{ data.tipo === TipoCobroPosnet.Qr ? 'qr_code_2' : 'credit_card' }}</mat-icon>
+    Cobro en posnet
+  </h2>
+
+  <div class="monto">$ {{ data.monto | number:'1.2-2' }}</div>
+
+  <!-- Detectando la estación / posnet de esta PC -->
+  <div class="estado" *ngIf="detectando">
+    <mat-spinner diameter="56"></mat-spinner>
+    <p>Buscando el posnet de esta PC…</p>
+  </div>
+
+  <!-- Esperando al cliente -->
+  <div class="estado" *ngIf="!detectando && esperando">
+    <mat-spinner diameter="56"></mat-spinner>
+    <p *ngIf="estado === EstadoCobro.Pendiente">Enviando al posnet…</p>
+    <p *ngIf="estado === EstadoCobro.EnCurso">
+      {{ data.tipo === TipoCobroPosnet.Qr
+          ? 'Mostrá el QR al cliente. Esperando el pago…'
+          : 'Insertá / acercá la tarjeta. Esperando el pago…' }}
+    </p>
+    <button mat-stroked-button color="warn" (click)="cancelar()">Cancelar</button>
+  </div>
+
+  <!-- Aprobado -->
+  <div class="estado ok" *ngIf="estado === EstadoCobro.Aprobado">
+    <mat-icon class="icono-grande">check_circle</mat-icon>
+    <p>¡Pago aprobado!</p>
+  </div>
+
+  <!-- Rechazado / Error -->
+  <div class="estado err"
+       *ngIf="estado === EstadoCobro.Rechazado || estado === EstadoCobro.Error || estado === EstadoCobro.Cancelado">
+    <mat-icon class="icono-grande">cancel</mat-icon>
+    <p>
+      {{ estado === EstadoCobro.Rechazado ? 'Pago rechazado' :
+         estado === EstadoCobro.Cancelado ? 'Cobro cancelado' : 'Error en el posnet' }}
+    </p>
+    <p class="detalle" *ngIf="mensajeError">{{ mensajeError }}</p>
+    <div class="acciones">
+      <button mat-stroked-button (click)="cancelar()">Cerrar</button>
+      <button mat-flat-button color="primary" *ngIf="!sinPosnet" (click)="reintentar()">Reintentar</button>
+    </div>
+  </div>
+</div>

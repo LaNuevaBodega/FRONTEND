@@ -1,0 +1,134 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 16px 20px;
+  gap: 12px;
+}
+
+/* ── Barra superior: título + buscador (izq) + fechas/buscar (der) ── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  // Compacta los form-field: anula el subscript reservado debajo del input
+  // y el ancho 100% forzado globalmente.
+  ::ng-deep .mat-mdc-form-field {
+    width: auto;
+  }
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.buscador {
+  flex: 0 1 340px;
+  min-width: 220px;
+  margin-right: auto; // empuja las fechas + Buscar hacia la derecha
+
+  ::ng-deep .mat-mdc-form-field {
+    width: 100%;
+  }
+}
+
+.filtros {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+
+  .fecha {
+    width: 140px;
+  }
+}
+
+.btn-buscar {
+  height: 48px;
+  border-radius: var(--lnb-radius-sm, 8px);
+
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+
+/* ── Tabla: ocupa todo el alto disponible ── */
+.tabla-wrapper {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+  border-radius: var(--lnb-radius-sm, 8px);
+
+  table {
+    width: 100%;
+  }
+
+  th.mat-mdc-header-cell {
+    background: #fafafa;
+    font-weight: 700;
+  }
+
+  tr.mat-mdc-row:hover {
+    background: #f7f7f8;
+  }
+}
+
+.r {
+  text-align: right;
+}
+
+.total {
+  font-weight: 600;
+}
+
+.letra-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  text-align: center;
+  border: 1px solid #555;
+  border-radius: 4px;
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+.nro {
+  font-variant-numeric: tabular-nums;
+}
+
+.cuit {
+  font-size: 12px;
+  color: #888;
+}
+
+.empty {
+  margin-top: 40px;
+  text-align: center;
+  color: #777;
+}
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+mat-paginator {
+  flex-shrink: 0;
+}

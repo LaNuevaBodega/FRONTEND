@@ -61,6 +61,11 @@
                 <span>Condición IVA</span>
             </a>
 
+            <a class="nav__item" routerLink="/app/facturas" routerLinkActive="is-active" *ngIf="authService.isAdmin">
+                <mat-icon>receipt_long</mat-icon>
+                <span>Facturas ARCA</span>
+            </a>
+
             <div class="nav__sep" *ngIf="authService.isAdmin">Sistema</div>
 
             <a class="nav__item" routerLink="/app/configuracion" routerLinkActive="is-active" *ngIf="authService.isAdmin">

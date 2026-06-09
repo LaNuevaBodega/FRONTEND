@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { firstValueFrom } from 'rxjs';
 import { NotificationService } from '../../../Service/notification-service';
 import { MetodoDePagoService } from '../../../Service/metodo-de-pago-service';
 import { MetodoPagoDTO } from '../../../interfaces/MetodoDePagoDTO/MetodoPagoDTO';
@@ -11,9 +12,15 @@ import { FormsModule } from '@angular/forms';
 import { PagoTemporal } from '../../../interfaces/Ventas/PagoTemporal';
 import { ClienteService } from '../../../Service/cliente-service';
 import { ClienteDTO } from '../../../interfaces/ClienteDTO';
+import {
+  DialogCobroPosnet,
+  DatosCobroPosnet,
+  ResultadoCobroPosnet,
+} from '../dialog-cobro-posnet/dialog-cobro-posnet';
+import { TipoCobroPosnet } from '../../../interfaces/Posnet/CobroDTO';
 
 export interface ResultadoPago {
-  pagos: { metodoPagoId: number; monto: number }[];
+  pagos: { metodoPagoId: number; monto: number; cobroElectronicoId?: number }[];
   imprimirTicket: boolean;
   ticketFiscal: boolean;
   clienteId: number | null;
@@ -45,7 +52,7 @@ export class DialogPago implements OnInit {
 
   // ── Paso 2: opciones de comprobante ──
   paso: 1 | 2 = 1;
-  pagosConfirmados: { metodoPagoId: number; monto: number }[] = [];
+  pagosConfirmados: { metodoPagoId: number; monto: number; cobroElectronicoId?: number }[] = [];
   imprimirTicket: boolean = true;
   ticketFiscal: boolean = false;
   clienteSeleccionado: ClienteDTO | null = null;
@@ -58,6 +65,7 @@ export class DialogPago implements OnInit {
     private metodoPagoService: MetodoDePagoService,
     private clienteService: ClienteService,
     private notif: NotificationService,
+    private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: { total: number }
   ) {
     this.restante = data.total;
@@ -233,11 +241,27 @@ export class DialogPago implements OnInit {
     this.pagosConfirmados = [];
   }
 
-  confirmarFinal(): void {
+  async confirmarFinal(): Promise<void> {
     if (this.ticketFiscal && !this.clienteSeleccionado) {
       this.notif.warning('Seleccione un cliente para la factura electrónica.');
       return;
     }
+
+    // Cobros por posnet: por cada pago cuyo método use posnet, autorizamos en el terminal
+    // ANTES de cerrar. La venta no se crea hasta que el posnet aprueba.
+    for (const pago of this.pagosConfirmados) {
+      const metodo = this.metodos.find(m => m.id === pago.metodoPagoId);
+      if (!metodo?.usaPosnet) continue;
+      if (pago.cobroElectronicoId) continue; // ya autorizado (reintento de confirmar)
+
+      const resultado = await this.cobrarPosnet(metodo, pago.monto);
+      if (!resultado) {
+        this.notif.warning('El cobro en el posnet no se completó. La venta no se registró.');
+        return; // no cerramos: el cajero reintenta o cambia de método
+      }
+      pago.cobroElectronicoId = resultado.cobroId;
+    }
+
     const resultado: ResultadoPago = {
       pagos: this.pagosConfirmados,
       imprimirTicket: this.imprimirTicket,
@@ -245,6 +269,20 @@ export class DialogPago implements OnInit {
       clienteId: this.clienteSeleccionado?.id ?? null
     };
     this.dialogRef.close(resultado);
+  }
+
+  /** Abre el diálogo de cobro por posnet y resuelve con el resultado (o null si no se aprobó). */
+  private cobrarPosnet(metodo: MetodoPagoDTO, monto: number): Promise<ResultadoCobroPosnet | null> {
+    const tipo = (metodo.nombre || '').toLowerCase().includes('qr')
+      ? TipoCobroPosnet.Qr
+      : TipoCobroPosnet.Tarjeta;
+
+    const ref = this.dialog.open(DialogCobroPosnet, {
+      data: { metodoPagoId: metodo.id, tipo, monto } as DatosCobroPosnet,
+      width: '380px',
+      disableClose: true,
+    });
+    return firstValueFrom(ref.afterClosed());
   }
 
   get resumenPagos(): string {

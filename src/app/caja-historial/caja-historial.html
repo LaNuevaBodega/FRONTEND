@@ -30,6 +30,38 @@
       Buscar
     </button>
 
+    <mat-form-field appearance="outline" *ngIf="cierres.length > 0">
+      <mat-label>Cierre</mat-label>
+      <mat-select [(ngModel)]="cierreSeleccionado" (ngModelChange)="onCierreChange()">
+        <mat-option [value]="null">Todos los cierres</mat-option>
+        <mat-option *ngFor="let c of cierres" [value]="c.cajaId">{{ c.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+  </div>
+
+  <!-- Totales exactos del cierre filtrado (idénticos al ticket impreso) -->
+  <div class="cierre-panel" *ngIf="cierreSeleccionado != null && ticketSeleccionado">
+    <div class="cp-item">
+      <span class="cp-lbl">Apertura</span>
+      <span class="cp-val">{{ ticketSeleccionado.montoInicial | currency:'$':'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="cp-item">
+      <span class="cp-lbl">Ventas</span>
+      <span class="cp-val ingreso">{{ ticketSeleccionado.totalVentas | currency:'$':'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="cp-item">
+      <span class="cp-lbl">Retiros</span>
+      <span class="cp-val egreso">{{ ticketSeleccionado.totalRetiros | currency:'$':'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="cp-item total">
+      <span class="cp-lbl">Cierre</span>
+      <span class="cp-val">{{ ticketSeleccionado.montoFinal | currency:'$':'symbol':'1.2-2' }}</span>
+    </div>
+    <button mat-raised-button color="primary" (click)="reimprimirSeleccionado()">
+      <mat-icon>print</mat-icon>
+      Reimprimir cierre
+    </button>
   </div>
 
   <div class="spinner-wrapper" *ngIf="cargando">
@@ -55,13 +87,17 @@
       <!-- Tipo -->
       <ng-container matColumnDef="tipo">
         <th mat-header-cell *matHeaderCellDef>Tipo</th>
-        <td mat-cell *matCellDef="let m">{{ m.tipo }}</td>
+        <td mat-cell *matCellDef="let m">
+          <span class="tipo-chip" [ngClass]="claseTipo(m)">{{ m.tipo }}</span>
+        </td>
       </ng-container>
 
-      <!-- Descripción -->
+      <!-- Descripción (en el CIERRE se muestra el subtotal de la sesión) -->
       <ng-container matColumnDef="descripcion">
         <th mat-header-cell *matHeaderCellDef>Descripción</th>
-        <td mat-cell *matCellDef="let m">{{ m.descripcion }}</td>
+        <td mat-cell *matCellDef="let m">
+          {{ m.tipo === 'CIERRE' ? subtotalCierre(m) : descripcionMostrar(m) }}
+        </td>
       </ng-container>
 
       <!-- Ingreso -->
@@ -97,7 +133,7 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;" [ngClass]="claseFila(row)"></tr>
 
     </table>
 

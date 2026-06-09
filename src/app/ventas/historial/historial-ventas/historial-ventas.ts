@@ -105,7 +105,7 @@ export class HistorialVentas implements OnInit {
 
 
     this.metodoPagoService.obtenerActivos().subscribe(m => {
-      this.metodosDePago = [...m, { id: -1, nombre: 'MIXTO', activo: true }];
+      this.metodosDePago = [...m, { id: -1, nombre: 'MIXTO', activo: true, usaPosnet: false }];
     });
 
   }

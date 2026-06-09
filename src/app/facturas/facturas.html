@@ -1,1 +1,113 @@
-<p>facturas works!</p>
+<div class="page">
+
+  <div class="toolbar">
+
+    <h2 class="page-title">Facturas ARCA</h2>
+
+    <mat-form-field appearance="outline" class="buscador">
+      <mat-label>Buscar cliente / comprobante</mat-label>
+      <input matInput [(ngModel)]="busqueda" (ngModelChange)="onBusquedaChange()" placeholder="Ej: Pérez o 0010-00000074">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <div class="filtros">
+
+      <mat-form-field appearance="outline" class="fecha">
+        <mat-label>Desde</mat-label>
+        <input matInput [matDatepicker]="pickerDesde" [(ngModel)]="desde">
+        <mat-datepicker-toggle matSuffix [for]="pickerDesde"></mat-datepicker-toggle>
+        <mat-datepicker #pickerDesde></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="fecha">
+        <mat-label>Hasta</mat-label>
+        <input matInput [matDatepicker]="pickerHasta" [(ngModel)]="hasta">
+        <mat-datepicker-toggle matSuffix [for]="pickerHasta"></mat-datepicker-toggle>
+        <mat-datepicker #pickerHasta></mat-datepicker>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" class="btn-buscar" (click)="buscar()">
+        <mat-icon>search</mat-icon>
+        Buscar
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="spinner-wrapper" *ngIf="cargando">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div class="tabla-wrapper" *ngIf="!cargando">
+
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z2" *ngIf="dataSource.data.length > 0">
+
+      <!-- Fecha -->
+      <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let f">{{ f.fechaEmision | date:'dd/MM/yy HH:mm' }}</td>
+      </ng-container>
+
+      <!-- Comprobante -->
+      <ng-container matColumnDef="comprobante">
+        <th mat-header-cell *matHeaderCellDef>Comprobante</th>
+        <td mat-cell *matCellDef="let f">
+          <span class="letra-chip">{{ letra(f) }}</span>
+          <span class="nro">{{ numeroComprobante(f) }}</span>
+        </td>
+      </ng-container>
+
+      <!-- Cliente -->
+      <ng-container matColumnDef="cliente">
+        <th mat-header-cell *matHeaderCellDef>Cliente</th>
+        <td mat-cell *matCellDef="let f">
+          <div>{{ f.clienteRazonSocial }}</div>
+          <div class="cuit" *ngIf="f.clienteCuit && f.clienteCuit !== 'Sin CUIT'">{{ f.clienteCuit }}</div>
+        </td>
+      </ng-container>
+
+      <!-- Total -->
+      <ng-container matColumnDef="total">
+        <th mat-header-cell *matHeaderCellDef class="r">Total</th>
+        <td mat-cell *matCellDef="let f" class="r total">{{ f.total | currency:'$':'symbol':'1.2-2' }}</td>
+      </ng-container>
+
+      <!-- CAE -->
+      <ng-container matColumnDef="cae">
+        <th mat-header-cell *matHeaderCellDef>CAE</th>
+        <td mat-cell *matCellDef="let f">{{ f.cae }}</td>
+      </ng-container>
+
+      <!-- Acciones -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let f">
+          <button mat-icon-button (click)="verDetalle(f)" matTooltip="Ver detalle">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button (click)="reimprimir(f)" matTooltip="Reimprimir ticket ARCA">
+            <mat-icon>print</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+
+    </table>
+
+    <div *ngIf="dataSource.data.length === 0" class="empty">
+      No hay facturas ARCA emitidas en el período seleccionado
+    </div>
+
+  </div>
+
+  <mat-paginator
+    *ngIf="!cargando && dataSource.data.length > 0"
+    [pageSizeOptions]="[25, 50, 100]"
+    pageSize="50"
+    showFirstLastButtons>
+  </mat-paginator>
+
+</div>

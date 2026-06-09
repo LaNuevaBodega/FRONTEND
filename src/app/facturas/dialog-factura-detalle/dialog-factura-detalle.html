@@ -1,0 +1,62 @@
+<h2 mat-dialog-title>
+  {{ factura.tipoComprobanteNombre }} N° {{ numeroComprobanteFormateado() }}
+</h2>
+
+<mat-dialog-content class="detalle">
+
+  <div class="bloque">
+    <div class="campo"><span class="etq">Letra</span><span class="val letra">{{ letraComprobante(factura.tipoComprobante) }}</span></div>
+    <div class="campo"><span class="etq">Fecha emisión</span><span class="val">{{ factura.fechaEmision | date:'dd/MM/yyyy HH:mm' }}</span></div>
+    <div class="campo"><span class="etq">N° venta</span><span class="val">{{ factura.numeroVenta }}</span></div>
+  </div>
+
+  <div class="bloque">
+    <div class="campo"><span class="etq">Cliente</span><span class="val">{{ factura.clienteRazonSocial }}</span></div>
+    <div class="campo"><span class="etq">CUIT cliente</span><span class="val">{{ factura.clienteCuit }}</span></div>
+  </div>
+
+  <div class="bloque">
+    <div class="campo"><span class="etq">Emisor</span><span class="val">{{ factura.emisorRazonSocial }}</span></div>
+    <div class="campo"><span class="etq">CUIT emisor</span><span class="val">{{ factura.emisorCuit }}</span></div>
+    <div class="campo" *ngIf="factura.emisorDomicilio"><span class="etq">Domicilio</span><span class="val">{{ factura.emisorDomicilio }}</span></div>
+  </div>
+
+  <table class="items">
+    <thead>
+      <tr>
+        <th>Cant.</th>
+        <th>Descripción</th>
+        <th class="r">P. Unit.</th>
+        <th class="r">Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let d of factura.detalles">
+        <td>{{ d.cantidad % 1 === 0 ? d.cantidad : (d.cantidad | number:'1.3-3') }}</td>
+        <td>{{ d.nombreProducto }}</td>
+        <td class="r">{{ d.precioUnitario | currency:'$':'symbol':'1.2-2' }}</td>
+        <td class="r">{{ d.subtotal | currency:'$':'symbol':'1.2-2' }}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" class="r total-lbl">TOTAL</td>
+        <td class="r total-val">{{ factura.total | currency:'$':'symbol':'1.2-2' }}</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="bloque cae">
+    <div class="campo"><span class="etq">CAE</span><span class="val">{{ factura.cae }}</span></div>
+    <div class="campo"><span class="etq">Vto. CAE</span><span class="val">{{ factura.caeFechaVto | date:'dd/MM/yyyy' }}</span></div>
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cerrar</button>
+  <button mat-raised-button color="primary" (click)="reimprimir()">
+    <mat-icon>print</mat-icon>
+    Reimprimir ticket
+  </button>
+</mat-dialog-actions>
